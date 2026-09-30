@@ -1,0 +1,252 @@
+-------------------------------------------------------------------------------------------------------------------------
+      name:  log_child
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\06_child.log
+  log type:  text
+ opened on:  22 Sep 2026, 10:46:37
+r; t=0.06 10:46:37
+
+. 
+. *Datensatz laden
+. use "$orig_bef\KINDER.dta", clear
+(PASS V1, 2006-2022, 16 Nov 2023, KINDER)
+r; t=0.10 10:46:37
+
+. *************
+. 
+. ***age of children in HH
+. tab                     alter, mis
+
+                Alter des Kindes |      Freq.     Percent        Cum.
+---------------------------------+-----------------------------------
+               Unplausibler Wert |          1        0.00        0.00
+Frage irrtuemlich nicht gestellt |         19        0.03        0.03
+                    Keine Angabe |         20        0.03        0.06
+                     Weiss nicht |          6        0.01        0.07
+                               0 |      2,502        3.73        3.80
+                               1 |      4,313        6.43       10.22
+                               2 |      4,346        6.47       16.69
+                               3 |      4,311        6.42       23.12
+                               4 |      4,138        6.16       29.28
+                               5 |      4,132        6.16       35.44
+                               6 |      4,134        6.16       41.60
+                               7 |      4,220        6.29       47.88
+                               8 |      4,182        6.23       54.11
+                               9 |      4,248        6.33       60.44
+                              10 |      4,245        6.32       66.76
+                              11 |      4,256        6.34       73.10
+                              12 |      4,193        6.25       79.35
+                              13 |      4,288        6.39       85.74
+                              14 |      4,225        6.29       92.03
+                              15 |      1,350        2.01       94.04
+                              16 |      1,367        2.04       96.08
+                              17 |      1,262        1.88       97.96
+                              18 |        663        0.99       98.95
+                              19 |        381        0.57       99.51
+                              20 |        150        0.22       99.74
+                              21 |         57        0.08       99.82
+                              22 |         45        0.07       99.89
+                              23 |         43        0.06       99.95
+                              24 |         31        0.05      100.00
+---------------------------------+-----------------------------------
+                           Total |     67,128      100.00
+r; t=0.01 10:46:37
+
+. tab                     alter, mis nol
+
+  Alter des |
+     Kindes |      Freq.     Percent        Cum.
+------------+-----------------------------------
+         -8 |          1        0.00        0.00
+         -4 |         19        0.03        0.03
+         -2 |         20        0.03        0.06
+         -1 |          6        0.01        0.07
+          0 |      2,502        3.73        3.80
+          1 |      4,313        6.43       10.22
+          2 |      4,346        6.47       16.69
+          3 |      4,311        6.42       23.12
+          4 |      4,138        6.16       29.28
+          5 |      4,132        6.16       35.44
+          6 |      4,134        6.16       41.60
+          7 |      4,220        6.29       47.88
+          8 |      4,182        6.23       54.11
+          9 |      4,248        6.33       60.44
+         10 |      4,245        6.32       66.76
+         11 |      4,256        6.34       73.10
+         12 |      4,193        6.25       79.35
+         13 |      4,288        6.39       85.74
+         14 |      4,225        6.29       92.03
+         15 |      1,350        2.01       94.04
+         16 |      1,367        2.04       96.08
+         17 |      1,262        1.88       97.96
+         18 |        663        0.99       98.95
+         19 |        381        0.57       99.51
+         20 |        150        0.22       99.74
+         21 |         57        0.08       99.82
+         22 |         45        0.07       99.89
+         23 |         43        0.06       99.95
+         24 |         31        0.05      100.00
+------------+-----------------------------------
+      Total |     67,128      100.00
+r; t=0.01 10:46:37
+
+. recode                  alter -8 -4 -2 -1=., gen(age_child)
+(46 differences between alter and age_child)
+r; t=0.05 10:46:37
+
+. drop                    alter
+r; t=0.00 10:46:37
+
+. 
+. ***restrict data on wave 7 only
+. drop                    if welle!=7
+(62,088 observations deleted)
+r; t=0.01 10:46:37
+
+. 
+. ***number of children per HH
+. bysort hnr:     gen childnum=_n
+r; t=0.00 10:46:37
+
+. bysort hnr:     gen childsum=_N
+r; t=0.00 10:46:37
+
+. tab1                    childnum childsum
+
+-> tabulation of childnum  
+
+   childnum |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |      2,998       59.48       59.48
+          2 |      1,435       28.47       87.96
+          3 |        429        8.51       96.47
+          4 |        122        2.42       98.89
+          5 |         41        0.81       99.70
+          6 |         14        0.28       99.98
+          7 |          1        0.02      100.00
+------------+-----------------------------------
+      Total |      5,040      100.00
+
+-> tabulation of childsum  
+
+   childsum |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |      1,563       31.01       31.01
+          2 |      2,012       39.92       70.93
+          3 |        921       18.27       89.21
+          4 |        324        6.43       95.63
+          5 |        135        2.68       98.31
+          6 |         78        1.55       99.86
+          7 |          7        0.14      100.00
+------------+-----------------------------------
+      Total |      5,040      100.00
+r; t=0.01 10:46:37
+
+. 
+. ***Indicators for children under 4 years, between 4 and 9 as well as 10 and 17 years
+. gen                     child_3=0
+r; t=0.00 10:46:37
+
+. replace                 child_3=1 if age_child<4
+(953 real changes made)
+r; t=0.00 10:46:37
+
+. forvalue                x=1(1)7 {
+  2.         bysort hnr: replace child_3=1 if age_child[_n+`x']<4
+  3. }
+(387 real changes made)
+(140 real changes made)
+(45 real changes made)
+(18 real changes made)
+(7 real changes made)
+(0 real changes made)
+(0 real changes made)
+r; t=0.00 10:46:37
+
+. 
+. gen                     child_4_9=0
+r; t=0.00 10:46:37
+
+. replace                 child_4_9=1 if age_child>=4 & age_child<10
+(1,533 real changes made)
+r; t=0.00 10:46:37
+
+. forvalue                x=1(1)7 {
+  2.         bysort hnr: replace child_4_9=1 if age_child[_n+`x']>=4 & age_child[_n+`x']<10
+  3. }
+(444 real changes made)
+(125 real changes made)
+(37 real changes made)
+(11 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+r; t=0.01 10:46:37
+
+. 
+. gen                     child_10_17=0
+r; t=0.00 10:46:37
+
+. replace                 child_10_17=1 if age_child>=10 & age_child<18
+(2,272 real changes made)
+r; t=0.00 10:46:37
+
+. forvalue                x=1(1)7 {
+  2.         bysort hnr: replace child_10_17=1 if age_child[_n+`x']>=10 & age_child[_n+`x']<18
+  3. }
+(128 real changes made)
+(8 real changes made)
+(1 real change made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+r; t=0.01 10:46:37
+
+. 
+. ***Keep only the first row of HH to creat a HH-level dataset
+. keep                    if childnum==1
+(2,042 observations deleted)
+r; t=0.00 10:46:37
+
+. tab1                    child_*
+
+-> tabulation of child_3  
+
+    child_3 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      2,163       72.15       72.15
+          1 |        835       27.85      100.00
+------------+-----------------------------------
+      Total |      2,998      100.00
+
+-> tabulation of child_4_9  
+
+  child_4_9 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,792       59.77       59.77
+          1 |      1,206       40.23      100.00
+------------+-----------------------------------
+      Total |      2,998      100.00
+
+-> tabulation of child_10_17  
+
+child_10_17 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,358       45.30       45.30
+          1 |      1,640       54.70      100.00
+------------+-----------------------------------
+      Total |      2,998      100.00
+r; t=0.01 10:46:37
+
+. 
+. save                    "$data\DM_child.dta", replace
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\Daten\DM_child.dta saved
+r; t=0.05 10:46:37
+
+. 
+. log close               log_child
+      name:  log_child
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\06_child.log
+  log type:  text
+ closed on:  22 Sep 2026, 10:46:37
+-------------------------------------------------------------------------------------------------------------------------

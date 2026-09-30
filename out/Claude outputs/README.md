@@ -45,7 +45,7 @@ The code also writes intermediate data sets to the data folder (`${data}`). It e
 
 ### 3.2 Grid cell identifiers and GridAB (restricted, on-site only)
 
-- **`pass_gridab_w7.dta`**: links PASS respondents (`pnr`) to their 1×1 km grid cell (`geo_grid_cell`), based on the survey address. Only respondents who consented to the linkage are included. Mark Trappmann and Sebastian Bähr (sebastian.baehr@iab.de) provided the link.
+- **`pass_gridab_w7.dta`**: links PASS respondents (`pnr`) to their 1×1 km grid cell (`geo_grid_cell`), based on the survey address. Only respondents who consented to the linkage are included. Mark Trappmann and Sebastian Bähr provided the link.
 - **`GridAB_home_cens.dta`**: GridAB, residence-based grid cell aggregates of IAB register data (employment, unemployment, benefit receipt, wages, income inequality, etc.), 2012. Cells with fewer than ten inhabitants are censored.
 - **`GridAB_work_all_cens5.dta`**: workplace-based GridAB. Used for the number of establishment closures in the last five years (`n_est_close_5yrs`).
 - **`GridAB_widernh.dta`**: aggregates for the wider neighbourhood (surrounding 3×3 km grid cells). Used for imputation and robustness checks.
@@ -53,13 +53,16 @@ The code also writes intermediate data sets to the data folder (`${data}`). It e
 
 ### 3.3 County-level data (public, included)
 
-- **File:** `lab_areas2009-2015.dta` and LK_ALQ_2013.dta in `data/`
+<!-- TODO: add the file name and exact source/version of the county file -->
+
+- **File:** `[FILENAME].dta` in `data/`
 - **Contents:** county IDs (`kreisnr`, Kreiskennziffer), labour market area IDs (`lab_area`/`amr`) and annual county unemployment rates (`alq`, %) for 2013.
 - **Sources:**
-  - County unemployment rates: Statistics Department of the Federal Employment Agency (Statistik der Bundesagentur für Arbeit), annual averages, unemployment rate relative to the civilian labour force. 
-  - Labour market areas (Arbeitsmarktregionen, 2014 delineation).
+  - County unemployment rates: Statistics Department of the Federal Employment Agency (Statistik der Bundesagentur für Arbeit), annual averages, unemployment rate relative to the civilian labour force. [add table name / retrieval date]
+  - Labour market areas (Arbeitsmarktregionen, 2014 delineation): [add reference]
 - **Used in:** `02_nh.do` (county, labour market area and state unemployment) and `08_merge.do` (labour market area IDs; county unemployment and the `highalq` median split at 8.6%).
 
+> **Note:** the code reads this information from three files: `${data}\LK_ALQ_2013.dta`, `${data}\lab_areas2009-15.dta` and `${orig}\Kreiskennziffer_Arbeitsmarktregionen.dta`. [If the provided file combines these, either split it into these names or change the file names in `02_nh.do` and `08_merge.do`.]
 
 ### 3.4 Other auxiliary files
 
@@ -69,7 +72,7 @@ The code also writes intermediate data sets to the data folder (`${data}`). It e
 
 ## 4. Software requirements
 
-- **Stata** [version used: Stata 17 MP]. The code needs `mi impute chained`, `mi estimate` and `mixed`.
+- **Stata** [version used: please add, e.g. Stata 17 MP]. The code needs `mi impute chained`, `mi estimate` and `mixed`.
 - **User-written packages** (install from SSC):
 
 ```stata
@@ -80,6 +83,7 @@ ssc install grc1leg2     // combined graphs with a shared legend
 ssc install blindschemes // graph scheme plotplainblind
 ```
 
+- **Runtime:** the imputation (50 data sets, 100 burn-in iterations) and the three-level random-slope models on 50 imputations take a long time. [Add approximate runtime on your machine.]
 - **Random seed:** `set seed 564` (in `10_imputation.do`).
 
 ---
@@ -103,7 +107,28 @@ ssc install blindschemes // graph scheme plotplainblind
 
 ---
 
-## 6. Mapping of results to output files
+## 6. Do-files
+
+| File | Description | Main input | Main output |
+|------|-------------|------------|-------------|
+| `00_master.do` | Sets paths, adopath and graph scheme, and runs all scripts in order | – | – |
+| `01_pintdat.do` | Interview date (month) for wave 7 per person | `PENDDAT` | `pintdat_w7.dta` |
+| `02_nh.do` | Merges GridAB (2012, lagged) to respondents' grid cells; adds firm closures and wider-neighbourhood data; computes the Gini coefficient of median wages and neighbourhood unemployment shares; prepares unemployment rates for counties, labour market areas and states | `pass_gridab_w7`, GridAB files, county files | `regio_nh.dta`, `LK_AMR_ALQ_2013.dta` |
+| `03_ind.do` | Individual-level variables. Builds the **stigma consciousness** scale (8 items `PSV0100a–h`, sum score normalised to 0–100) and the prejudice measures; codes gender, age, education, migration background, job search obligation, health, care work, social activity, etc. | `PENDDAT`, `regio_nh` | `DM_ind.dta` |
+| `04_spells.do` | Duration of current unemployment (years) and number of unemployment episodes from biographical spells, censored at the interview month | `bio_spells`, `pintdat_w7` | `DM_spells.dta` |
+| `05_hh.do` | Household-level variables: deprivation index, (equivalised) household income, household size, UB II receipt, children | `HHENDDAT` | `DM_HH.dta` |
+| `06_child.do` | Indicators for children aged <4, 4–9 and 10–17 in the household | `KINDER` | `DM_child.dta` |
+| `07_HHgen.do` | Employed household members | `PENDDAT` | `DM_HHgen.dta` |
+| `08_merge.do` | Merges all files; applies sample restrictions (wave 7, unemployed, age < 65, counties with ≥ 5 respondents); centres variables; adds county unemployment (`highalq`, median split), urban/rural, movers; builds the alternative neighbourhood measures (welfare receipt `sgb2_quo`, unemployment `unemp_quo`, long-term unemployment `ltunemp_quo`) | intermediate files | `DM_comp.dta` |
+| `09_check_selectivity.do` | Selectivity of missing values in stigma consciousness | `DM_comp` | `Missing_selectivity.pdf` |
+| `10_imputation.do` | Multiple imputation by chained equations (PMM with 5 nearest neighbours; ordered logit), 50 imputations, 100 burn-in iterations | `DM_comp` | `IMP.dta` |
+| `11_main.do` | Null model and three-level RI/RS models with quadratic neighbourhood unemployment (H1); standardised models; interactions with county unemployment (H2) and neighbourhood inequality (H3) | `IMP` | tables and figures (Section 7), `analysed.dta` |
+| `12_robustness.do` | Robustness checks: other nesting levels (3×3 km, labour market areas, states), median split of Gini, single-item and binary outcomes (item 6), neighbourhood size, urban/rural, East/West, movers/stayers, county unemployment | `analysed` | robustness figures |
+| `13_sampledescription.do` | Sample descriptives and comparison of the analysis sample with all German grid cells | `analysed`, `GridAB_home_cens` | descriptive tables |
+
+---
+
+## 7. Mapping of results to output files
 
 | Result in article | File in `out/` | Produced by |
 |---|---|---|
@@ -122,6 +147,7 @@ ssc install blindschemes // graph scheme plotplainblind
 | Online Appendix Table A.3 – Standardised coefficients | `std/table_sd_quo.tex` | `11_main.do` |
 | Neighbourhood descriptives vs. all grid cells | `Description_nh.tex` | `13_sampledescription.do` |
 
+[Please check the appendix numbering against the final Online Appendix.]
 
 ---
 
@@ -146,4 +172,4 @@ The authors are happy to help with replications (kerstin.ostermann@uni-bielefeld
 
 ## 10. License
 
-CC BY 4.0. The data are subject to the access conditions of the FDZ/IAB described above.
+[Code: add license, e.g. MIT or CC BY 4.0.] The data are subject to the access conditions of the FDZ/IAB described above.

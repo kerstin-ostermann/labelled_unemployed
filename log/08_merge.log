@@ -1,0 +1,1177 @@
+-------------------------------------------------------------------------------------------------------------------------
+      name:  log_merge
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\08_merge.log
+  log type:  text
+ opened on:  22 Sep 2026, 10:53:07
+r; t=0.07 10:53:07
+
+. *************
+. 
+. ***load individual Data
+. use             "$data\DM_ind.dta", clear
+(PASS V1, 2006-2022, 16 Nov 2023, PENDDAT)
+r; t=0.46 10:53:07
+
+. 
+. ***merge bio spells
+. merge           1:1 pnr welle using "$data\DM_spells.dta", gen(_merge2)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                         7,676
+        from master                     5,933  (_merge2==1)
+        from using                      1,743  (_merge2==2)
+
+    Matched                             2,794  (_merge2==3)
+    -----------------------------------------
+r; t=0.06 10:53:07
+
+. tab             stig_con _merge2, mis
+
+    stigma |
+consciousn |    Matching result from merge
+       ess | Master on  Using onl  Matched ( |     Total
+-----------+---------------------------------+----------
+         0 |         0          0          4 |         4 
+     3.125 |         0          0          3 |         3 
+      6.25 |         0          0         13 |        13 
+     9.375 |         1          0         21 |        22 
+      12.5 |         1          0         28 |        29 
+    15.625 |         2          0         53 |        55 
+     18.75 |         1          0         51 |        52 
+    21.875 |         6          0         62 |        68 
+        25 |         8          0        118 |       126 
+    28.125 |         5          0        150 |       155 
+     31.25 |         2          0        176 |       178 
+    34.375 |         3          0        178 |       181 
+      37.5 |         5          0        184 |       189 
+    40.625 |         6          0        162 |       168 
+     43.75 |         5          0        161 |       166 
+    46.875 |         3          0        144 |       147 
+        50 |         2          0        104 |       106 
+    53.125 |         3          0         97 |       100 
+     56.25 |         4          0         78 |        82 
+    59.375 |         2          0         56 |        58 
+      62.5 |         1          0         45 |        46 
+    65.625 |         1          0         24 |        25 
+     68.75 |         3          0         15 |        18 
+    71.875 |         0          0         10 |        10 
+        75 |         0          0          9 |         9 
+         . |         6      1,743        117 |     1,866 
+        .a |        90          0          0 |        90 
+        .c |     5,773          0        731 |     6,504 
+-----------+---------------------------------+----------
+     Total |     5,933      1,743      2,794 |    10,470 
+r; t=0.01 10:53:08
+
+. keep            if _merge2==1 | _merge2==3
+(1,743 observations deleted)
+r; t=0.00 10:53:08
+
+. 
+. ***merge HH data
+. merge           m:1 hnr welle using "$data\DM_HH.dta", gen(_merge3)
+(variable hnr was long, now double to accommodate using data's values)
+(variable sample was byte, now float to accommodate using data's values)
+(variable hhgr was byte, now float to accommodate using data's values)
+(label zutreffen already defined)
+(label eink4000 already defined)
+(label eink1500 already defined)
+(label eink3000 already defined)
+(label eink500 already defined)
+(label eink1000 already defined)
+(label monat already defined)
+(label gut already defined)
+(label janein already defined)
+(label metric already defined)
+(label jatrifft already defined)
+(label janein2 already defined)
+(label fbvers_lb already defined)
+(label monat2 already defined)
+(label metric2 already defined)
+(label janein3 already defined)
+(label geschlecht already defined)
+(label welle_lb already defined)
+(label sample_lb already defined)
+(label metric_en already defined)
+(label zutreffen_en already defined)
+(label janein_en already defined)
+(label jatrifft_en already defined)
+(label welle_lb_en already defined)
+(label monat_en already defined)
+(label sample_lb_en already defined)
+(label gut_en already defined)
+(label geschlecht_en already defined)
+(label eink1000_en already defined)
+(label eink500_en already defined)
+(label eink3000_en already defined)
+(label eink1500_en already defined)
+(label eink4000_en already defined)
+(label janein2_en already defined)
+(label fbvers_lb_en already defined)
+(label monat2_en already defined)
+(label metric2_en already defined)
+(label janein3_en already defined)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                       137,919
+        from master                        11  (_merge3==1)
+        from using                    137,908  (_merge3==2)
+
+    Matched                             8,716  (_merge3==3)
+    -----------------------------------------
+r; t=2.50 10:53:10
+
+. tab             stig_con _merge3, mis
+
+    stigma |
+consciousn |    Matching result from merge
+       ess | Master on  Using onl  Matched ( |     Total
+-----------+---------------------------------+----------
+         0 |         0          0          4 |         4 
+     3.125 |         0          0          3 |         3 
+      6.25 |         0          0         13 |        13 
+     9.375 |         0          0         22 |        22 
+      12.5 |         0          0         29 |        29 
+    15.625 |         0          0         55 |        55 
+     18.75 |         0          0         52 |        52 
+    21.875 |         0          0         68 |        68 
+        25 |         1          0        125 |       126 
+    28.125 |         0          0        155 |       155 
+     31.25 |         0          0        178 |       178 
+    34.375 |         0          0        181 |       181 
+      37.5 |         1          0        188 |       189 
+    40.625 |         0          0        168 |       168 
+     43.75 |         0          0        166 |       166 
+    46.875 |         0          0        147 |       147 
+        50 |         0          0        106 |       106 
+    53.125 |         0          0        100 |       100 
+     56.25 |         0          0         82 |        82 
+    59.375 |         0          0         58 |        58 
+      62.5 |         0          0         46 |        46 
+    65.625 |         0          0         25 |        25 
+     68.75 |         0          0         18 |        18 
+    71.875 |         0          0         10 |        10 
+        75 |         0          0          9 |         9 
+         . |         0    137,908        123 |   138,031 
+        .a |         0          0         90 |        90 
+        .c |         9          0      6,495 |     6,504 
+-----------+---------------------------------+----------
+     Total |        11    137,908      8,716 |   146,635 
+r; t=0.06 10:53:10
+
+. keep            if _merge3==1 | _merge3==3
+(137,908 observations deleted)
+r; t=0.01 10:53:10
+
+. 
+.         ***benefit receipt
+.         tab1            alg1abez alg2abez, mis
+
+-> tabulation of alg1abez  
+
+        Aktueller ALG1-Bezug, generiert |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+Item fuer Fragebogenversion nicht relev |         90        1.03        1.03
+Generierung nicht mgl. (fehlende Werte) |        141        1.62        2.65
+         Bezieht gegenwaertig kein ALG1 |      8,258       94.63       97.27
+              Bezieht gegenwaertig ALG1 |        238        2.73      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      8,727      100.00
+
+-> tabulation of alg2abez  
+
+ Aktueller ALG2-Bezug des HH, generiert |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+Generierung nicht mgl. (fehlende Werte) |         19        0.22        0.22
+                HH bezieht aktuell ALG2 |      3,525       40.39       40.61
+           HH bezieht aktuell kein ALG2 |      5,172       59.26       99.87
+                                      . |         11        0.13      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      8,727      100.00
+r; t=0.02 10:53:10
+
+.         tab1            alg1abez alg2abez, mis nol
+
+-> tabulation of alg1abez  
+
+  Aktueller |
+ALG1-Bezug, |
+  generiert |      Freq.     Percent        Cum.
+------------+-----------------------------------
+        -10 |         90        1.03        1.03
+         -5 |        141        1.62        2.65
+          0 |      8,258       94.63       97.27
+          1 |        238        2.73      100.00
+------------+-----------------------------------
+      Total |      8,727      100.00
+
+-> tabulation of alg2abez  
+
+  Aktueller |
+ ALG2-Bezug |
+    des HH, |
+  generiert |      Freq.     Percent        Cum.
+------------+-----------------------------------
+         -5 |         19        0.22        0.22
+          1 |      3,525       40.39       40.61
+          2 |      5,172       59.26       99.87
+          . |         11        0.13      100.00
+------------+-----------------------------------
+      Total |      8,727      100.00
+r; t=0.02 10:53:10
+
+.         recode          alg1abez -10/-3=., gen(algI)
+(231 differences between alg1abez and algI)
+r; t=0.01 10:53:10
+
+.         recode          alg2abez -5=. 2=0, gen(algII)
+(5,191 differences between alg2abez and algII)
+r; t=0.01 10:53:10
+
+.         gen             leistbez=.
+(8,727 missing values generated)
+r; t=0.00 10:53:10
+
+.         replace         leistbez=0 if algI==0 & algII==0
+(4,886 real changes made)
+r; t=0.00 10:53:10
+
+.         replace         leistbez=1 if algI==1 & (algII==0 | algII==1)
+(237 real changes made)
+r; t=0.00 10:53:10
+
+.         replace         leistbez=2 if algI==0 & algII==1
+(3,343 real changes made)
+r; t=0.00 10:53:10
+
+.         la var          leistbez "benefit receipt"
+r; t=0.00 10:53:10
+
+.         la def          leist 0"no benefits" 1"ALGI" 2"ALGII"
+r; t=0.00 10:53:10
+
+.         la val          leistbez leist
+r; t=0.00 10:53:10
+
+.         tab             leistbez algI, mis
+
+            |  RECODE of alg1abez (Aktueller
+    benefit |      ALG1-Bezug, generiert)
+    receipt |         0          1          . |     Total
+------------+---------------------------------+----------
+no benefits |     4,886          0          0 |     4,886 
+       ALGI |         0        237          0 |       237 
+      ALGII |     3,343          0          0 |     3,343 
+          . |        29          1        231 |       261 
+------------+---------------------------------+----------
+      Total |     8,258        238        231 |     8,727 
+r; t=0.00 10:53:10
+
+.         tab             leistbez algII, mis
+
+            |  RECODE of alg2abez (Aktueller
+    benefit |  ALG2-Bezug des HH, generiert)
+    receipt |         0          1          . |     Total
+------------+---------------------------------+----------
+no benefits |     4,886          0          0 |     4,886 
+       ALGI |       178         59          0 |       237 
+      ALGII |         0      3,343          0 |     3,343 
+          . |       108        123         30 |       261 
+------------+---------------------------------+----------
+      Total |     5,172      3,525         30 |     8,727 
+r; t=0.00 10:53:10
+
+. 
+. 
+. *correct obligation to search 
+. replace         search=0 if alg2_cur == 0
+(5,172 real changes made)
+r; t=0.00 10:53:10
+
+. 
+. ***merge child data
+. merge           m:1 hnr welle using "$data\DM_child.dta", gen(_merge4)
+(label janein2_en already defined)
+(label metric_en already defined)
+(label welle_lb_en already defined)
+(label but_lb_en already defined)
+(label genannt_en already defined)
+(label janein_en already defined)
+(label welle_lb already defined)
+(label but_lb already defined)
+(label genannt already defined)
+(label janein already defined)
+(label metric already defined)
+(label janein2 already defined)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                         5,482
+        from master                     5,051  (_merge4==1)
+        from using                        431  (_merge4==2)
+
+    Matched                             3,676  (_merge4==3)
+    -----------------------------------------
+r; t=0.10 10:53:10
+
+. tab             stig_con _merge4, mis
+
+    stigma |
+consciousn |    Matching result from merge
+       ess | Master on  Using onl  Matched ( |     Total
+-----------+---------------------------------+----------
+         0 |         3          0          1 |         4 
+     3.125 |         3          0          0 |         3 
+      6.25 |         9          0          4 |        13 
+     9.375 |        18          0          4 |        22 
+      12.5 |        23          0          6 |        29 
+    15.625 |        37          0         18 |        55 
+     18.75 |        39          0         13 |        52 
+    21.875 |        40          0         28 |        68 
+        25 |        88          0         38 |       126 
+    28.125 |       109          0         46 |       155 
+     31.25 |       116          0         62 |       178 
+    34.375 |       122          0         59 |       181 
+      37.5 |       137          0         52 |       189 
+    40.625 |       126          0         42 |       168 
+     43.75 |       125          0         41 |       166 
+    46.875 |       109          0         38 |       147 
+        50 |        82          0         24 |       106 
+    53.125 |        76          0         24 |       100 
+     56.25 |        62          0         20 |        82 
+    59.375 |        38          0         20 |        58 
+      62.5 |        36          0         10 |        46 
+    65.625 |        19          0          6 |        25 
+     68.75 |        17          0          1 |        18 
+    71.875 |         7          0          3 |        10 
+        75 |         9          0          0 |         9 
+         . |        87        431         36 |       554 
+        .a |        90          0          0 |        90 
+        .c |     3,424          0      3,080 |     6,504 
+-----------+---------------------------------+----------
+     Total |     5,051        431      3,676 |     9,158 
+r; t=0.01 10:53:10
+
+. keep            if _merge4==1 | _merge4==3
+(431 observations deleted)
+r; t=0.00 10:53:10
+
+. 
+. *correct data on children
+. tab1            age_child child_* kindu25
+
+-> tabulation of age_child  
+
+  RECODE of |
+      alter |
+ (Alter des |
+    Kindes) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         54        1.47        1.47
+          1 |        153        4.16        5.63
+          2 |        163        4.44       10.07
+          3 |        153        4.16       14.23
+          4 |        152        4.14       18.37
+          5 |        131        3.56       21.93
+          6 |        137        3.73       25.66
+          7 |        143        3.89       29.55
+          8 |        147        4.00       33.55
+          9 |        149        4.05       37.61
+         10 |        167        4.54       42.15
+         11 |        154        4.19       46.34
+         12 |        169        4.60       50.94
+         13 |        201        5.47       56.41
+         14 |        204        5.55       61.96
+         15 |        265        7.21       69.17
+         16 |        348        9.47       78.64
+         17 |        391       10.64       89.28
+         18 |        184        5.01       94.29
+         19 |        113        3.07       97.36
+         20 |         53        1.44       98.80
+         21 |         18        0.49       99.29
+         22 |         10        0.27       99.56
+         23 |         14        0.38       99.95
+         24 |          2        0.05      100.00
+------------+-----------------------------------
+      Total |      3,675      100.00
+
+-> tabulation of child_3  
+
+    child_3 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      2,695       73.31       73.31
+          1 |        981       26.69      100.00
+------------+-----------------------------------
+      Total |      3,676      100.00
+
+-> tabulation of child_4_9  
+
+  child_4_9 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      2,268       61.70       61.70
+          1 |      1,408       38.30      100.00
+------------+-----------------------------------
+      Total |      3,676      100.00
+
+-> tabulation of child_10_17  
+
+child_10_17 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,576       42.87       42.87
+          1 |      2,100       57.13      100.00
+------------+-----------------------------------
+      Total |      3,676      100.00
+
+-> tabulation of kindu25  
+
+    Steuervariable: Kind unter 18 Jahre |
+     bzw. Schueler unter 25 Jahre im HH |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+Kein Kind unter 18 Jahre bzw. Schueler  |      5,044       57.87       57.87
+Kind unter 18 Jahre bzw. Schueler unter |      3,672       42.13      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      8,716      100.00
+r; t=0.03 10:53:10
+
+. foreach         var of varlist child_* {
+  2.         replace `var'=0 if kindu25==0
+  3. }
+(5,044 real changes made)
+(5,044 real changes made)
+(5,044 real changes made)
+r; t=0.00 10:53:10
+
+. tab1            child_*
+
+-> tabulation of child_3  
+
+    child_3 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      7,739       88.75       88.75
+          1 |        981       11.25      100.00
+------------+-----------------------------------
+      Total |      8,720      100.00
+
+-> tabulation of child_4_9  
+
+  child_4_9 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      7,312       83.85       83.85
+          1 |      1,408       16.15      100.00
+------------+-----------------------------------
+      Total |      8,720      100.00
+
+-> tabulation of child_10_17  
+
+child_10_17 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,620       75.92       75.92
+          1 |      2,100       24.08      100.00
+------------+-----------------------------------
+      Total |      8,720      100.00
+r; t=0.01 10:53:10
+
+. 
+. ***merge generated hh data
+. merge           m:1 hnr welle using "$data\DM_HHgen.dta", gen(_merge6)
+(label welle_lb already defined)
+(label welle_lb_en already defined)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                       137,204
+        from master                         0  (_merge6==1)
+        from using                    137,204  (_merge6==2)
+
+    Matched                             8,727  (_merge6==3)
+    -----------------------------------------
+r; t=0.27 10:53:11
+
+. tab             stig_con _merge6, mis
+
+    stigma | Matching result from
+consciousn |         merge
+       ess | Using onl  Matched ( |     Total
+-----------+----------------------+----------
+         0 |         0          4 |         4 
+     3.125 |         0          3 |         3 
+      6.25 |         0         13 |        13 
+     9.375 |         0         22 |        22 
+      12.5 |         0         29 |        29 
+    15.625 |         0         55 |        55 
+     18.75 |         0         52 |        52 
+    21.875 |         0         68 |        68 
+        25 |         0        126 |       126 
+    28.125 |         0        155 |       155 
+     31.25 |         0        178 |       178 
+    34.375 |         0        181 |       181 
+      37.5 |         0        189 |       189 
+    40.625 |         0        168 |       168 
+     43.75 |         0        166 |       166 
+    46.875 |         0        147 |       147 
+        50 |         0        106 |       106 
+    53.125 |         0        100 |       100 
+     56.25 |         0         82 |        82 
+    59.375 |         0         58 |        58 
+      62.5 |         0         46 |        46 
+    65.625 |         0         25 |        25 
+     68.75 |         0         18 |        18 
+    71.875 |         0         10 |        10 
+        75 |         0          9 |         9 
+         . |   137,204        123 |   137,327 
+        .a |         0         90 |        90 
+        .c |         0      6,504 |     6,504 
+-----------+----------------------+----------
+     Total |   137,204      8,727 |   145,931 
+r; t=0.04 10:53:11
+
+. keep            if _merge6==1 | _merge6==3
+(137,204 observations deleted)
+r; t=0.01 10:53:11
+
+. 
+. **merge labor market area IDs 
+. gen kreisnr = kr_id
+r; t=0.00 10:53:11
+
+. sort kreisnr
+r; t=0.01 10:53:11
+
+. merge           m:1 kreisnr using "$data\lab_areas2009-15.dta", gen(_merge7)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           414
+        from master                       337  (_merge7==1)
+        from using                         77  (_merge7==2)
+
+    Matched                             8,390  (_merge7==3)
+    -----------------------------------------
+r; t=0.09 10:53:11
+
+. drop if _merge7==2
+(77 observations deleted)
+r; t=0.00 10:53:11
+
+. drop _merge7
+r; t=0.00 10:53:11
+
+. 
+. **merge unemployment on county level
+. merge           m:1 kreisnr using "$data\LK_AMR_ALQ_2013.dta", gen(_merge7)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            57
+        from master                         0  (_merge7==1)
+        from using                         57  (_merge7==2)
+
+    Matched                             8,727  (_merge7==3)
+    -----------------------------------------
+r; t=0.06 10:53:11
+
+. drop if _merge7==2
+(57 observations deleted)
+r; t=0.00 10:53:11
+
+. drop _merge7
+r; t=0.00 10:53:11
+
+. 
+. ***generate Kreis-specific means
+. cap rename kr_id_n kr_id
+r; t=0.00 10:53:11
+
+. foreach         var of varlist  female child_3 child_4_9 child_10_17 care age unemp_cur_n depindug2 ln_oecdincn search 
+> emp_hh_cur pisei friends_num subhealth_prev akt_pol akt_com akt_other {
+  2.         cap drop mean_`var'
+  3.         bysort kr_id: egen mean_`var'=mean(`var')
+  4. }
+(210 missing values generated)
+(2 missing values generated)
+(8,727 missing values generated)
+(1 missing value generated)
+r; t=0.09 10:53:11
+
+. 
+. foreach         var of varlist educ_kat mig unemp_ep_ord leistbez {
+  2.         tab     `var', gen(`var'_)
+  3.         foreach var2 of varlist `var'_* {
+  4.                 cap drop mean_`var2'
+  5.                 bysort kr_id: egen mean_`var2'=mean(`var2')
+  6.                 drop `var2'
+  7.         }
+  8. }
+
+  educational |
+        level |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+ISCED 1 und 2 |      1,795       21.11       21.11
+ISCED 3 und 4 |      4,857       57.13       78.24
+ISCED 5 und 6 |      1,850       21.76      100.00
+--------------+-----------------------------------
+        Total |      8,502      100.00
+
+         migration background |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+      no mogration background |      6,466       75.91       75.91
+migration background 1st gen. |      1,429       16.78       92.69
+migration background 2nd gen. |        623        7.31      100.00
+------------------------------+-----------------------------------
+                        Total |      8,518      100.00
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+
+Arbeitslosigkeitsperiod |
+              en (ord.) |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+           1 AL-Episode |      1,988       71.15       71.15
+          2 AL-Episoden |        526       18.83       89.98
+3 oder mehr AL-Episoden |        280       10.02      100.00
+------------------------+-----------------------------------
+                  Total |      2,794      100.00
+(210 missing values generated)
+(210 missing values generated)
+(210 missing values generated)
+
+    benefit |
+    receipt |      Freq.     Percent        Cum.
+------------+-----------------------------------
+no benefits |      4,886       57.71       57.71
+       ALGI |        237        2.80       60.51
+      ALGII |      3,343       39.49      100.00
+------------+-----------------------------------
+      Total |      8,466      100.00
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+r; t=0.09 10:53:11
+
+. 
+. ***reduce dataset to obs that should be imputed
+. keep            if welle==7
+(0 observations deleted)
+r; t=0.00 10:53:11
+
+. drop            if statakt==3 | statakt==4 | age>=65 | educ_kat==.a | stig_con>.
+(6,600 observations deleted)
+r; t=0.01 10:53:11
+
+. 
+. *drop           if PRE_N<5 | unemp_quo==.
+. bysort kr_id: egen kr_id_N=count(pnr)
+r; t=0.01 10:53:11
+
+. tab             kr_id_N
+
+    kr_id_N |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |         57        2.68        2.68
+          2 |         62        2.91        5.59
+          3 |         60        2.82        8.42
+          4 |        108        5.08       13.49
+          5 |         80        3.76       17.25
+          6 |         66        3.10       20.36
+          7 |        112        5.27       25.62
+          8 |        104        4.89       30.51
+          9 |         63        2.96       33.47
+         10 |         90        4.23       37.71
+         11 |         44        2.07       39.77
+         12 |         60        2.82       42.60
+         13 |         26        1.22       43.82
+         14 |         84        3.95       47.77
+         15 |        135        6.35       54.11
+         16 |        112        5.27       59.38
+         17 |         51        2.40       61.78
+         19 |         38        1.79       63.56
+         20 |         60        2.82       66.38
+         21 |        126        5.92       72.31
+         22 |         44        2.07       74.38
+         23 |         46        2.16       76.54
+         24 |         24        1.13       77.67
+         26 |         26        1.22       78.89
+         27 |         27        1.27       80.16
+         29 |         29        1.36       81.52
+         32 |         32        1.50       83.03
+         33 |         33        1.55       84.58
+         45 |         45        2.12       86.69
+         46 |         46        2.16       88.86
+         48 |         48        2.26       91.11
+         54 |         54        2.54       93.65
+        135 |        135        6.35      100.00
+------------+-----------------------------------
+      Total |      2,127      100.00
+r; t=0.01 10:53:11
+
+. drop if         kr_id_N<5
+(287 observations deleted)
+r; t=0.00 10:53:11
+
+. *286 prs lost
+. 
+. ***centering of continious variables
+. *individual level
+. foreach         var of varlist age age2 pisei unemp_cur_n depindug2 ln_hhinc ln_oecdincn hhgr sat_gen sat_health sat_fl
+> at sat_std friends_num updown {
+  2.         cap drop `var'_c
+  3.         sum     `var'
+  4.         gen     `var'_c=`var'-r(mean)
+  5. }
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |      1,840    45.17663    12.50108         16         64
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        age2 |      1,840     2197.12    1083.958        256       4096
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+       pisei |      1,733    35.11368    18.83428          0         88
+(107 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ unemp_cur_n |      1,784    4.929419    4.693944   .0833333   37.91667
+(56 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   depindug2 |      1,839    6.134856    3.540421          0         18
+(1 missing value generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+    ln_hhinc |      1,828    6.857146    .5506813   3.988984   10.40429
+(12 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ ln_oecdincn |      1,828    6.536205    .4063515   3.970292   9.998797
+(12 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        hhgr |      1,840    2.071196    1.275884          1          9
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     sat_gen |      1,838    5.758433    2.197235          0         10
+(2 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+  sat_health |      1,838    5.609902    2.644136          0         10
+(2 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+    sat_flat |      1,840    6.728804    2.527034          0         10
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     sat_std |      1,840     5.12337    2.317979          0         10
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ friends_num |      1,833    6.388434    8.057498          0         99
+(7 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+      updown |      1,829    4.594861    1.907143          1         10
+(11 missing values generated)
+r; t=0.16 10:53:11
+
+. 
+. *neighborhood level
+. cap drop        n_nh
+r; t=0.00 10:53:11
+
+. bysort          geo_grid_cell: gen n_nh=_n
+r; t=0.00 10:53:11
+
+. foreach         var of varlist PRE_mean PRE_spr PRE_sep unemp_quo mean_* {
+  2.         cap drop `var'_c
+  3.         sum     `var' if n_nh==1
+  4.         gen     `var'_c=`var'-r(mean)
+  5. }
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+    PRE_mean |        626    43.61239    13.53417         10         87
+(671 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     PRE_spr |        350    .0004996    .0009377   2.11e-06   .0082647
+(1,072 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     PRE_sep |        352   -386.9561    400.0483    -1424.4   95.21245
+(1,069 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   unemp_quo |      1,179    .1389514    .0789384          0   .6304348
+(9 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ mean_female |      1,185     .525597     .068991   .2941177   .7619048
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_child_3 |      1,185    .1100247     .057491          0        .36
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_child~9 |      1,185    .1537854    .0615462          0   .4117647
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_chil~17 |      1,185     .223359    .0738007   .0434783   .4230769
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   mean_care |      1,185     .075324     .037316          0   .2380952
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+    mean_age |      1,185    42.07318    2.169761         36    48.3913
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_unemp~n |      1,185    4.696418    1.398978   1.511905   10.88095
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_depin~2 |      1,185    4.025335    .9056947   2.123077   7.785714
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_ln_oe~n |      1,185    6.877699    .1346452   6.161773   7.196542
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ mean_search |      1,185    .2344018    .0896626          0   .5263158
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_emp_h~r |      1,185    .5596422    .1099663   .2105263   .9047619
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+  mean_pisei |      1,185    36.96671    4.351984   25.47619   47.77778
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_frien~m |      1,185    6.889806    1.769882          4       17.6
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_subhe~v |          0
+(1,840 missing values generated)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_akt_pol |      1,185    .0794987    .0479657          0   .2941177
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_akt_com |      1,185    .2814107    .0884213   .0714286         .7
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_akt_o~r |      1,185    .0739252    .0394924          0         .2
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_educ_~1 |      1,185    .2161876    .0883946    .027027   .5217391
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_educ_~2 |      1,185    .5755626    .1056798   .2173913        .85
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_educ_~3 |      1,185    .2082498    .0799633          0   .4545455
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+  mean_mig_1 |      1,185    .7600355    .1359655     .40625          1
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+  mean_mig_2 |      1,185    .1672404    .1144356          0   .5555556
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+  mean_mig_3 |      1,185    .0727241    .0434335          0   .2142857
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_unemp~1 |      1,185    .7096812    .1267503        .25          1
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_unemp~2 |      1,185    .1915829    .1074499          0       .625
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_unemp~3 |      1,185    .0987359    .0765405          0   .3333333
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_leist~1 |      1,185    .5169051    .1132852         .2   .8717949
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_leist~2 |      1,185    .0315134    .0276625          0   .1428571
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+mean_leist~3 |      1,185    .4515815    .1187094   .1282051   .7027027
+r; t=0.21 10:53:11
+
+. 
+. //merge Raumordnungsregionen (rural vs. urban)
+. cap drop krs15
+r; t=0.00 10:53:11
+
+. gen krs15 = kr_id*1000
+r; t=0.00 10:53:11
+
+. merge           m:1 krs15 using "$orig\Kreiskennziffer_Raumordnungsregion.dta", update
+(variable krs15 was float, now double to accommodate using data's values)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           268
+        from master                         0  (_merge==1)
+        from using                        268  (_merge==2)
+
+    Matched                             1,840
+        not updated                     1,840  (_merge==3)
+        missing updated                     0  (_merge==4)
+        nonmissing conflict                 0  (_merge==5)
+    -----------------------------------------
+r; t=0.07 10:53:12
+
+. drop if _merge==2
+(268 observations deleted)
+r; t=0.00 10:53:12
+
+. drop _merge
+r; t=0.00 10:53:12
+
+. 
+. gen urban = (rtyp3==1) 
+r; t=0.00 10:53:12
+
+. lab define urban 0 "Rural" 1 "Urban"
+r; t=0.00 10:53:12
+
+. lab value urban urban
+r; t=0.00 10:53:12
+
+. 
+. //mover vs stayer
+. gen moved = umzug == 1
+r; t=0.00 10:53:12
+
+. lab var moved "Moved since last wave"
+r; t=0.00 10:53:12
+
+. lab define moved 0 "Stayer" 1 "Mover"
+r; t=0.00 10:53:12
+
+. lab value moved moved 
+r; t=0.00 10:53:12
+
+. tab moved
+
+Moved since |
+  last wave |      Freq.     Percent        Cum.
+------------+-----------------------------------
+     Stayer |      1,668       90.65       90.65
+      Mover |        172        9.35      100.00
+------------+-----------------------------------
+      Total |      1,840      100.00
+r; t=0.00 10:53:12
+
+. 
+. //local labor market unemployment quota 
+. sort kreisnr 
+r; t=0.00 10:53:12
+
+. merge m:1 kreisnr using $data\LK_AMR_ALQ_2013.dta, keepusing(alq_amr alq_bula bula)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           267
+        from master                         0  (_merge==1)
+        from using                        267  (_merge==2)
+
+    Matched                             1,840  (_merge==3)
+    -----------------------------------------
+r; t=0.04 10:53:12
+
+. drop if _merge==2
+(267 observations deleted)
+r; t=0.00 10:53:12
+
+. drop _merge
+r; t=0.00 10:53:12
+
+. 
+. *county unemployment quota
+. cap drop highalq
+r; t=0.00 10:53:12
+
+. sum alq, d
+
+                             alq
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     3.298038       2.939775
+ 5%     3.973597       2.939775
+10%     5.090706       2.939775       Obs               1,840
+25%     6.947896       2.939775       Sum of wgt.       1,840
+
+50%     8.604441                      Mean           8.631734
+                        Largest       Std. dev.      2.622054
+75%     11.12144       14.96311
+90%     11.93417       14.96311       Variance       6.875166
+95%     12.51648       14.96311       Skewness      -.0852856
+99%     14.33475       14.96311       Kurtosis       2.279039
+r; t=0.00 10:53:12
+
+. gen highalq = (alq>r(p50) & alq<.)
+r; t=0.00 10:53:12
+
+. lab define higalq 0 "Low unemployment" 1 "High unemployment", modify
+r; t=0.00 10:53:12
+
+. lab value highalq higalq
+r; t=0.00 10:53:12
+
+. tab highalq
+
+          highalq |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+ Low unemployment |        934       50.76       50.76
+High unemployment |        906       49.24      100.00
+------------------+-----------------------------------
+            Total |      1,840      100.00
+r; t=0.00 10:53:12
+
+. lab var alq "County unemployment"
+r; t=0.00 10:53:12
+
+. 
+. //other definitions
+. *SGB II 
+. gen sgb2_quo = (n_ub2_unemp + n_ub2_emp ) / n 
+(9 missing values generated)
+r; t=0.00 10:53:12
+
+. lab var sgb2_quo "Neighborhood welfare receipt"
+r; t=0.00 10:53:12
+
+. sum sgb2_quo
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+    sgb2_quo |      1,831    .1783874    .1050969          0   .5531915
+r; t=0.00 10:53:12
+
+. 
+. *longtime ue
+. gen ltunemp_quo = (n_not_emp_1yr ) / n
+(9 missing values generated)
+r; t=0.00 10:53:12
+
+. lab var ltunemp_quo "Neighborhood longterm unemployment" 
+r; t=0.00 10:53:12
+
+. sum ltunemp_quo
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ ltunemp_quo |      1,831    .1054554    .0599706          0   .3695652
+r; t=0.01 10:53:12
+
+. 
+. 
+. *wider neighborhood
+. cap drop wnh_n_not_emp
+r; t=0.00 10:53:12
+
+. merge m:1 geo_grid_cell year using "$widenh\GridAB_widernh.dta", keepusing( wnh_n wnh_n_not_emp)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     3,718,217
+        from master                       195  (_merge==1)
+        from using                  3,718,022  (_merge==2)
+
+    Matched                             1,645  (_merge==3)
+    -----------------------------------------
+r; t=62.55 10:54:14
+
+. drop if _merge==2 //10% of the sample no wider NH
+(3,718,022 observations deleted)
+r; t=0.56 10:54:15
+
+. drop _merge
+r; t=0.00 10:54:15
+
+. 
+. gen     alq_wnh = wnh_n_not_emp /wnh_n
+(195 missing values generated)
+r; t=0.00 10:54:15
+
+. replace alq_wnh = alq_wnh*100
+(1,607 real changes made)
+r; t=0.00 10:54:15
+
+. sum alq_wnh ,d
+
+                           alq_wnh
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            0              0
+ 5%     1.901141              0
+10%     2.877698              0       Obs               1,645
+25%     4.872881              0       Sum of wgt.       1,645
+
+50%     7.829182                      Mean           9.284836
+                        Largest       Std. dev.      6.428809
+75%     12.38095       44.44445
+90%     17.34763             50       Variance       41.32959
+95%     20.29703             50       Skewness       1.739283
+99%      30.9406             50       Kurtosis       8.585453
+r; t=0.00 10:54:15
+
+. 
+. 
+. 
+. ***save dataset
+. save            "$data\DM_comp.dta", replace
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\Daten\DM_comp.dta saved
+r; t=0.27 10:54:15
+
+. 
+. 
+. log close log_merge
+      name:  log_merge
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\08_merge.log
+  log type:  text
+ closed on:  22 Sep 2026, 10:54:15
+-------------------------------------------------------------------------------------------------------------------------

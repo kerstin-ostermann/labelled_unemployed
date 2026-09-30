@@ -1,0 +1,2973 @@
+-------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\11_robustness.log
+  log type:  text
+ opened on:  22 Sep 2026, 20:36:35
+r; t=0.07 20:36:35
+
+. 
+. *Datensatz laden
+. use     "$data\analysed.dta", clear
+(PASS V1, 2006-2022, 16 Nov 2023, PENDDAT)
+r; t=4.42 20:36:40
+
+. 
+. ***define globals
+. global          level                           geo_grid_cell
+r; t=0.00 20:36:40
+
+. global          model_ind1_new          i.female child_* care c.age_c##c.age_c c.unemp_cur_n_c ///
+>                                                                 i.unemp_ep_ord depindug2_c ln_oecdincn_c search ib1.lei
+> stbez ///
+>                                                                 daily_wage_med n urban  n_est_close_5yrs alq  moved
+r; t=0.00 20:36:40
+
+. global          control_ind             i.subhealth i.mig i.educ_kat 
+r; t=0.00 20:36:40
+
+.  
+. 
+. 
+. ********************************************************************************
+. **# other nesting structures
+. ********************************************************************************
+. foreach unit in wnh amr bula {
+  2. sum alq_`unit'  if _mi_m==1 
+  3. }
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     alq_wnh |      1,645    9.284836    6.428809          0         50
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     alq_amr |      1,840    8.364321     2.56065   2.892084   14.33475
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+    alq_bula |      1,840    8.179697    2.217624   3.654398   11.99748
+r; t=0.01 20:36:40
+
+. 
+. lab define high_alo 0 "Low unemployment" 1 "High unemployment"
+r; t=0.00 20:36:40
+
+. 
+. //wider neighborhoods (3x3km), local labor markets [amr] or states [bula]
+. foreach unit in wnh amr bula {
+  2.         
+.         cap drop highalq_`unit'
+  3.         sum alq_`unit', d
+  4.         gen highalq_`unit' = (alq_`unit'>8.6 & alq_`unit'<.) //county cutoff
+  5.         lab value highalq_`unit' high_alo
+  6.         tab highalq_`unit'
+  7.         /*
+>         //compare individuals living in high unemployemnt vs low unemployment counties
+>         foreach ub in unemp sgb2 ltunemp {
+>         
+>                 **triple interaction: squared UE and urban vs rural
+>                 foreach level in 99.9 {
+>                 cap drop        ind
+>                 mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                                         mixed stig_con i.highalq_`unit'##c.`ub'_quo##c.`ub'_quo $model_ind1_new  $contr
+> ol_ind ///
+>                                         || kreisnr: c.`ub'_quo##c.`ub'_quo || $level:  ///
+>                                         , mle difficult   covariance(unstructured) 
+>                 est store       m_nh`ub'_alq
+>                 }
+>                 
+>                 *margins plot
+>                 mimrgns, dydx(`ub'_quo) at(`ub'_quo = (0.1 (0.1) 0.5)) by(highalq_`unit') cmdmargins
+>                 marginsplot, x(`ub'_quo) recast(line)   yline(0) title(" ") ///
+>                         ylabel(,labsize(vlarge)) ytitle("Average marginal effect",size(vlarge)) ///
+>                         xlabel(,labsize(vlarge)) xtitle(,size(vlarge))
+> 
+>                 graph save "${out}\nested\marginsplot_`ub'q2_`unit'highalq.gph", replace        
+>                 
+>                 
+>         }
+>         */
+.         grc1leg2 "${out}\nested\marginsplot_sgb2q2_`unit'highalq.gph" ///
+>                                         "${out}\nested\marginsplot_unempq2_`unit'highalq.gph" ///
+>                                         "${out}\nested\marginsplot_ltunempq2_`unit'highalq.gph", ycommon col(3)  xsize(
+> 15) ysize(6) ///
+>                                  legscale(medium)
+  8.                                  
+. 
+.         graph export "${out}\marginsplot_`unit'alq.png", as(png) replace
+  9.         graph export "${out}\marginsplot_`unit'alq.pdf", as(pdf) replace
+ 10. 
+. }
+
+                           alq_wnh
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            0              0
+ 5%     1.901141              0
+10%     2.877698              0       Obs              83,895
+25%     4.872881              0       Sum of wgt.      83,895
+
+50%     7.829182                      Mean           9.284836
+                        Largest       Std. dev.      6.426893
+75%     12.38095             50
+90%     17.34763             50       Variance       41.30495
+95%     20.29703             50       Skewness       1.739283
+99%      30.9406             50       Kurtosis       8.585453
+
+      highalq_wnh |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+ Low unemployment |     56,457       60.16       60.16
+High unemployment |     37,383       39.84      100.00
+------------------+-----------------------------------
+            Total |     93,840      100.00
+-grc1leg2- working...
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_wnhalq.png not found)
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_wnhalq.png saved as PNG format
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_wnhalq.pdf saved as PDF format
+
+                           alq_amr
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     2.892084       2.892084
+ 5%     3.983292       2.892084
+10%     4.775453       2.892084       Obs              93,840
+25%     6.446916       2.892084       Sum of wgt.      93,840
+
+50%     8.281085                      Mean           8.364321
+                        Largest       Std. dev.      2.559968
+75%     10.56912       14.33475
+90%     11.19684       14.33475       Variance       6.553437
+95%     11.94616       14.33475       Skewness      -.0990177
+99%      14.3148       14.33475       Kurtosis       2.286897
+
+      highalq_amr |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+ Low unemployment |     51,663       55.05       55.05
+High unemployment |     42,177       44.95      100.00
+------------------+-----------------------------------
+            Total |     93,840      100.00
+-grc1leg2- working...
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_amralq.png not found)
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_amralq.png saved as PNG format
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_amralq.pdf saved as PDF format
+
+                          alq_bula
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     3.654398       3.654398
+ 5%     3.654398       3.654398
+10%      3.94466       3.654398       Obs              93,840
+25%     6.714771       3.654398       Sum of wgt.      93,840
+
+50%     8.025271                      Mean           8.179697
+                        Largest       Std. dev.      2.217033
+75%     10.18577       11.99748
+90%     11.18499       11.99748       Variance       4.915236
+95%     11.18499       11.99748       Skewness      -.3767154
+99%     11.64143       11.99748       Kurtosis         2.4776
+
+     highalq_bula |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+ Low unemployment |     57,171       60.92       60.92
+High unemployment |     36,669       39.08      100.00
+------------------+-----------------------------------
+            Total |     93,840      100.00
+-grc1leg2- working...
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_bulaalq.png not found)
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_bulaalq.png saved as PNG format
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\marginsplot_bulaalq.pdf saved as PDF format
+r; t=11.24 20:36:51
+
+. 
+. ********************************************************************************
+. **# gini split at the median 
+. ********************************************************************************
+. //simple sample split
+. cap drop high_gini
+r; t=0.00 20:36:51
+
+. sum daily_inc_gini, d
+
+                    (firstnm) gini_income
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     .3480287       .2891928
+ 5%     .3897608       .2891928
+10%     .4149693       .2891928       Obs              93,381
+25%     .4573317       .2891928       Sum of wgt.      93,381
+
+50%     .4899705                      Mean            .489035
+                        Largest       Std. dev.      .0563551
+75%     .5241579       .6732227
+90%     .5586348       .6732227       Variance       .0031759
+95%      .584435       .6732227       Skewness      -.1713939
+99%     .6202059       .6732227       Kurtosis        3.48418
+r; t=0.06 20:36:51
+
+. gen high_gini = (daily_inc_gini>r(p50) & daily_inc_gini<.)
+r; t=0.00 20:36:51
+
+. lab value high_gini highgini
+r; t=0.00 20:36:51
+
+. tab high_gini
+
+                    high_gini |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+  Low-inquality neighbourhood |     47,175       50.27       50.27
+High-inequality neighbourhood |     46,665       49.73      100.00
+------------------------------+-----------------------------------
+                        Total |     93,840      100.00
+r; t=0.00 20:36:51
+
+. 
+. foreach ub in unemp sgb2 ltunemp {
+  2. foreach level in 99.9 {
+  3. cap drop        ind
+  4. mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                         mixed stig_con i.high_gini##c.`ub'_quo##c.`ub'_quo $model_ind1_new ///
+>                         $control_ind || kreisnr: c.`ub'_quo##c.`ub'_quo || $level: ///
+>                         , mle difficult   covariance(unstructured) 
+  5. est store       m_nh`ub'_gini_total
+  6. }
+  7. 
+. mimrgns, dydx(`ub'_quo) at(`ub'_quo = (0.1 (0.1) 0.6)) by(high_gini) cmdmargins
+  8. marginsplot, x(`ub'_quo) recast(line)   yline(0) title("") ///
+>                         ylabel(,labsize(vlarge)) ytitle("Average marginal effect",size(vlarge)) ///
+>                         xlabel(,labsize(vlarge)) xtitle(,size(vlarge))
+  9. graph save "${out}\gini\marginsplot_`ub'q2_gini50", replace     
+ 10. }
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,840
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.7        135
+           geo_grid_c~l |      1,185          1        1.6         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.0715
+                                                Largest FMI       =     0.1603
+DF adjustment:   Large sample                   DF:     min       =   1,926.90
+                                                        avg       =   2.14e+08
+                                                        max       =   4.40e+09
+Model F test:       Equal FMI                   F(  31,350963.7)  =       7.05
+                                                Prob > F          =     0.0000
+
+---------------------------------------------------------------------------------------------------
+                         stig_con | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+----------------------------------+----------------------------------------------------------------
+                        high_gini |
+   High-inequality neighbourhood  |   2.320532   2.838368     0.82   0.414    -7.021163    11.66223
+                        unemp_quo |  -15.61483   34.45603    -0.45   0.650    -129.0157    97.78602
+                                  |
+            high_gini#c.unemp_quo |
+   High-inequality neighbourhood  |    -26.915   38.34042    -0.70   0.483    -153.0935    99.26347
+                                  |
+          c.unemp_quo#c.unemp_quo |   22.17886   132.0771     0.17   0.867    -412.5286    456.8863
+                                  |
+high_gini#c.unemp_quo#c.unemp_quo |
+   High-inequality neighbourhood  |   71.03708   137.6989     0.52   0.606    -382.1499    524.2241
+                                  |
+                         1.female |   1.118488   .6262459     1.79   0.074     -.942492    3.179468
+                          child_3 |   .7087258   1.231015     0.58   0.565    -3.342968    4.760419
+                        child_4_9 |  -2.654685   1.035683    -2.56   0.010    -6.063234    .7538651
+                      child_10_17 |  -.9855456   .9090285    -1.08   0.278    -3.977098    2.006006
+                             care |   .7633305    1.07089     0.71   0.476    -2.760729     4.28739
+                            age_c |  -.0202126   .0309186    -0.65   0.513    -.1219778    .0815527
+                                  |
+                  c.age_c#c.age_c |  -.0037706   .0022899    -1.65   0.100     -.011307    .0037657
+                                  |
+                    unemp_cur_n_c |   .2535257   .0787756     3.22   0.001    -.0057575    .5128089
+                                  |
+                     unemp_ep_ord |
+                   2 AL-Episoden  |   1.261932   .8884613     1.42   0.156    -1.663775    4.187639
+         3 oder mehr AL-Episoden  |   .5903556     1.1616     0.51   0.611    -3.233462    4.414173
+                                  |
+                      depindug2_c |   .8711677   .0936935     9.30   0.000     .5627838    1.179552
+                    ln_oecdincn_c |    1.18746   .8273926     1.44   0.151    -1.536115    3.911034
+                           search |   1.864494   .6840899     2.73   0.006    -.3873722    4.116361
+                                  |
+                         leistbez |
+                     no benefits  |   .4668836   1.853419     0.25   0.801    -5.636529    6.570296
+                           ALGII  |   1.111395   1.218476     0.91   0.362    -2.900494    5.123284
+                                  |
+                   daily_wage_med |  -.0562648   .0447486    -1.26   0.209     -.203546    .0910164
+                                n |   .0003083   .0010253     0.30   0.764    -.0030663    .0036828
+                            urban |  -1.283239   .9109876    -1.41   0.159    -4.281395    1.714916
+                 n_est_close_5yrs |  -.0083552   .0221481    -0.38   0.706     -.081252    .0645415
+                              alq |  -.0919329   .1576233    -0.58   0.560    -.6106596    .4267939
+                            moved |    -.00274   1.062906    -0.00   0.998    -3.500722    3.495242
+                                  |
+                        subhealth |
+                  good/very good  |  -2.359293   .6939347    -3.40   0.001    -4.643405   -.0751802
+                                  |
+                              mig |
+   migration background 1st gen.  |    3.23494   .8494573     3.81   0.000      .437567    6.032313
+   migration background 2nd gen.  |  -.2876625   1.323797    -0.22   0.828    -4.644584    4.069259
+                                  |
+                         educ_kat |
+                   ISCED 3 und 4  |  -1.344744   .7475186    -1.80   0.072    -3.804954    1.115466
+                   ISCED 5 und 6  |  -.6400151   1.037258    -0.62   0.537    -4.054234    2.774204
+                                  |
+                            _cons |   44.13896   4.246652    10.39   0.000     30.16232    58.11561
+---------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+               sd(unemp_quo) |   .0000447   .0119968             0           .
+     sd(unemp_quo#unemp_quo) |   .0000216   .0058108             0           .
+                   sd(_cons) |   2.025049   .7649815       .583399     7.02919
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   4.101055   .8126498      2.135137    7.877083
+-----------------------------+------------------------------------------------
+                sd(Residual) |   11.89442   .3206179      10.88337    12.99939
+------------------------------------------------------------------------------
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,840
+                                                Average RVI       =     0.0647
+                                                Largest FMI       =     0.0784
+DF adjustment:   Large sample                   DF:     min       =   8,015.71
+                                                        avg       =  22,199.09
+Within VCE type: Delta-method                           max       =  78,732.17
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : unemp_quo
+over         : high_gini
+
+1._at        : 0.high_gini
+                   unemp_quo       =          .1
+               1.high_gini
+                   unemp_quo       =          .1
+
+2._at        : 0.high_gini
+                   unemp_quo       =          .2
+               1.high_gini
+                   unemp_quo       =          .2
+
+3._at        : 0.high_gini
+                   unemp_quo       =          .3
+               1.high_gini
+                   unemp_quo       =          .3
+
+4._at        : 0.high_gini
+                   unemp_quo       =          .4
+               1.high_gini
+                   unemp_quo       =          .4
+
+5._at        : 0.high_gini
+                   unemp_quo       =          .5
+               1.high_gini
+                   unemp_quo       =          .5
+
+6._at        : 0.high_gini
+                   unemp_quo       =          .6
+               1.high_gini
+                   unemp_quo       =          .6
+
+--------------------------------------------------------------------------------------------------
+                                 |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                   _at#high_gini |
+  1#Low-inquality neighbourhood  |  -11.17906   12.61226    -0.89   0.375    -35.90112      13.543
+1#High-inequality neighbourhood  |  -23.88664   13.60047    -1.76   0.079     -50.5471    2.773818
+  2#Low-inquality neighbourhood  |   -6.74329   22.94492    -0.29   0.769    -51.72103    38.23445
+2#High-inequality neighbourhood  |  -5.243456   7.885206    -0.66   0.506    -20.69974    10.21283
+  3#Low-inquality neighbourhood  |  -2.307518   47.84787    -0.05   0.962    -96.09873    91.48369
+3#High-inequality neighbourhood  |   13.39973   10.35658     1.29   0.196     -6.89911    33.69857
+  4#Low-inquality neighbourhood  |   2.128253      73.81     0.03   0.977    -142.5527    146.8092
+4#High-inequality neighbourhood  |   32.04292   17.89469     1.79   0.073    -3.030963     67.1168
+  5#Low-inquality neighbourhood  |   6.564024   100.0098     0.07   0.948    -189.4726    202.6007
+5#High-inequality neighbourhood  |    50.6861   26.47753     1.91   0.056    -1.210881    102.5831
+  6#Low-inquality neighbourhood  |    10.9998   126.2995     0.09   0.931    -236.5687    258.5683
+6#High-inequality neighbourhood  |   69.32929    35.3522     1.96   0.050     .0370873    138.6215
+--------------------------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: unemp_quo high_gini
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\gini\marginsplot_unempq2_gini50.gph saved
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,840
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.7        135
+           geo_grid_c~l |      1,185          1        1.6         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.0728
+                                                Largest FMI       =     0.1609
+DF adjustment:   Large sample                   DF:     min       =   1,913.78
+                                                        avg       =   1.68e+08
+                                                        max       =   4.24e+09
+Model F test:       Equal FMI                   F(  31,336417.6)  =       6.99
+                                                Prob > F          =     0.0000
+
+-------------------------------------------------------------------------------------------------
+                       stig_con | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+--------------------------------+----------------------------------------------------------------
+                      high_gini |
+ High-inequality neighbourhood  |   1.550529   2.599043     0.60   0.551    -7.003824    10.10488
+                       sgb2_quo |   -22.1545   25.30889    -0.88   0.381    -105.4596    61.15057
+                                |
+           high_gini#c.sgb2_quo |
+ High-inequality neighbourhood  |  -9.855847   29.75751    -0.33   0.740    -107.7971    88.08546
+                                |
+          c.sgb2_quo#c.sgb2_quo |   49.32052   83.50931     0.59   0.555    -225.6126    324.2536
+                                |
+high_gini#c.sgb2_quo#c.sgb2_quo |
+ High-inequality neighbourhood  |   7.889525    89.2932     0.09   0.930    -286.0476    301.8267
+                                |
+                       1.female |   1.125007   .6265908     1.80   0.073    -.9371045    3.187118
+                        child_3 |   .6826825   1.231329     0.55   0.579     -3.37003    4.735395
+                      child_4_9 |  -2.669941    1.03624    -2.58   0.010    -6.080333    .7404504
+                    child_10_17 |  -1.006202    .908564    -1.11   0.268    -3.996224     1.98382
+                           care |    .760006   1.070652     0.71   0.478    -2.763264    4.283276
+                          age_c |  -.0212393   .0309124    -0.69   0.492    -.1229838    .0805051
+                                |
+                c.age_c#c.age_c |  -.0037367   .0022918    -1.63   0.103    -.0112795    .0038061
+                                |
+                  unemp_cur_n_c |   .2540289   .0788383     3.22   0.001    -.0054603     .513518
+                                |
+                   unemp_ep_ord |
+                 2 AL-Episoden  |   1.280474   .8892944     1.44   0.150    -1.647986    4.208934
+       3 oder mehr AL-Episoden  |   .5719535   1.162138     0.49   0.623    -3.253643     4.39755
+                                |
+                    depindug2_c |   .8692896   .0936884     9.28   0.000     .5609228    1.177656
+                  ln_oecdincn_c |   1.212493    .826979     1.47   0.143    -1.509702    3.934687
+                         search |   1.880389   .6840721     2.75   0.006    -.3714132     4.13219
+                                |
+                       leistbez |
+                   no benefits  |   .3970683   1.853034     0.21   0.830    -5.705125    6.499262
+                         ALGII  |   1.138684   1.218719     0.93   0.350    -2.873965    5.151334
+                                |
+                 daily_wage_med |  -.0589918   .0455616    -1.29   0.195    -.2089454    .0909619
+                              n |   .0003303   .0010275     0.32   0.748    -.0030517    .0037123
+                          urban |  -1.265944   .9137959    -1.39   0.166    -4.273344    1.741456
+               n_est_close_5yrs |  -.0087903   .0221842    -0.40   0.692    -.0818064    .0642257
+                            alq |  -.0829835   .1585191    -0.52   0.601    -.6046611    .4386942
+                          moved |  -.0234287   1.063094    -0.02   0.982    -3.522027     3.47517
+                                |
+                      subhealth |
+                good/very good  |  -2.368133   .6941749    -3.41   0.001    -4.653028   -.0832391
+                                |
+                            mig |
+ migration background 1st gen.  |   3.296714   .8503555     3.88   0.000     .4963768     6.09705
+ migration background 2nd gen.  |  -.2785039    1.32508    -0.21   0.834    -4.639672    4.082664
+                                |
+                       educ_kat |
+                 ISCED 3 und 4  |  -1.385431   .7489898    -1.85   0.064     -3.85052    1.079657
+                 ISCED 5 und 6  |  -.6453757   1.038378    -0.62   0.534    -4.063299    2.772547
+                                |
+                          _cons |   44.57697   4.078246    10.93   0.000     31.15526    57.99867
+-------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+                sd(sgb2_quo) |    .000042   .0092932             0           .
+       sd(sgb2_quo#sgb2_quo) |    .000038   .0098951             0           .
+                   sd(_cons) |   2.040485   .7423569      .6155175    6.764356
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   4.100532    .815108      2.130432    7.892466
+-----------------------------+------------------------------------------------
+                sd(Residual) |   11.89694   .3210062       10.8847    13.00332
+------------------------------------------------------------------------------
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,840
+                                                Average RVI       =     0.0777
+                                                Largest FMI       =     0.1225
+DF adjustment:   Large sample                   DF:     min       =   3,293.03
+                                                        avg       =  14,168.62
+Within VCE type: Delta-method                           max       =  45,871.31
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : sgb2_quo
+over         : high_gini
+
+1._at        : 0.high_gini
+                   sgb2_quo        =          .1
+               1.high_gini
+                   sgb2_quo        =          .1
+
+2._at        : 0.high_gini
+                   sgb2_quo        =          .2
+               1.high_gini
+                   sgb2_quo        =          .2
+
+3._at        : 0.high_gini
+                   sgb2_quo        =          .3
+               1.high_gini
+                   sgb2_quo        =          .3
+
+4._at        : 0.high_gini
+                   sgb2_quo        =          .4
+               1.high_gini
+                   sgb2_quo        =          .4
+
+5._at        : 0.high_gini
+                   sgb2_quo        =          .5
+               1.high_gini
+                   sgb2_quo        =          .5
+
+6._at        : 0.high_gini
+                   sgb2_quo        =          .6
+               1.high_gini
+                   sgb2_quo        =          .6
+
+--------------------------------------------------------------------------------------------------
+                                 |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                   _at#high_gini |
+  1#Low-inquality neighbourhood  |   -12.2904   11.08542    -1.11   0.268    -34.01908    9.438281
+1#High-inequality neighbourhood  |  -20.56834   12.57669    -1.64   0.102    -45.22161    4.084921
+  2#Low-inquality neighbourhood  |  -2.426297   12.77254    -0.19   0.849    -27.46922    22.61662
+2#High-inequality neighbourhood  |  -9.126333   7.203217    -1.27   0.205    -23.24595    4.993286
+  3#Low-inquality neighbourhood  |   7.437808   27.59155     0.27   0.788    -46.65724    61.53285
+3#High-inequality neighbourhood  |   2.315676   7.021666     0.33   0.742     -11.4469    16.07825
+  4#Low-inquality neighbourhood  |   17.30191   43.78759     0.40   0.693    -68.54367    103.1475
+4#High-inequality neighbourhood  |   13.75768   12.26481     1.12   0.262    -10.28191    37.79727
+  5#Low-inquality neighbourhood  |   27.16601   60.26042     0.45   0.652     -90.9726    145.3046
+5#High-inequality neighbourhood  |   25.19969   18.84811     1.34   0.181    -11.74409    62.14347
+  6#Low-inquality neighbourhood  |   37.03012    76.8322     0.48   0.630    -113.5955    187.6558
+6#High-inequality neighbourhood  |    36.6417   25.76396     1.42   0.155    -13.85816    87.14157
+--------------------------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: sgb2_quo high_gini
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\gini\marginsplot_sgb2q2_gini50.gph saved
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,840
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.7        135
+           geo_grid_c~l |      1,185          1        1.6         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.0726
+                                                Largest FMI       =     0.1597
+DF adjustment:   Large sample                   DF:     min       =   1,941.47
+                                                        avg       =   5.61e+07
+                                                        max       =   1.30e+09
+Model F test:       Equal FMI                   F(  31,339113.6)  =       7.06
+                                                Prob > F          =     0.0000
+
+-------------------------------------------------------------------------------------------------------
+                             stig_con | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+--------------------------------------+----------------------------------------------------------------
+                            high_gini |
+       High-inequality neighbourhood  |   3.611645   2.710432     1.33   0.183    -5.309971    12.53326
+                          ltunemp_quo |  -3.620437   45.04079    -0.08   0.936    -151.8706    144.6297
+                                      |
+              high_gini#c.ltunemp_quo |
+       High-inequality neighbourhood  |   -66.2216   52.66835    -1.26   0.209    -239.5707    107.1275
+                                      |
+          c.ltunemp_quo#c.ltunemp_quo |  -29.86012   258.4621    -0.12   0.908    -880.6454    820.9251
+                                      |
+high_gini#c.ltunemp_quo#c.ltunemp_quo |
+       High-inequality neighbourhood  |   258.4898   273.9693     0.94   0.345    -643.2879    1160.268
+                                      |
+                             1.female |   1.149072   .6257129     1.84   0.066    -.9101515    3.208295
+                              child_3 |   .7039834   1.230743     0.57   0.567    -3.346815    4.754781
+                            child_4_9 |  -2.660765   1.035282    -2.57   0.010    -6.067995    .7464645
+                          child_10_17 |  -1.005377   .9088153    -1.11   0.269    -3.996225    1.985472
+                                 care |   .8144698   1.069692     0.76   0.446     -2.70564     4.33458
+                                age_c |   -.020238   .0308993    -0.65   0.513    -.1219396    .0814636
+                                      |
+                      c.age_c#c.age_c |  -.0038378   .0022894    -1.68   0.094    -.0113724    .0036969
+                                      |
+                        unemp_cur_n_c |   .2517054   .0787449     3.20   0.001     -.007476    .5108867
+                                      |
+                         unemp_ep_ord |
+                       2 AL-Episoden  |   1.229309   .8880994     1.38   0.166    -1.695197    4.153815
+             3 oder mehr AL-Episoden  |   .5843473    1.16115     0.50   0.615     -3.23797    4.406665
+                                      |
+                          depindug2_c |   .8711834   .0936659     9.30   0.000     .5628913    1.179476
+                        ln_oecdincn_c |   1.194679   .8269341     1.44   0.149    -1.527378    3.916737
+                               search |    1.86963   .6837955     2.73   0.006    -.3812556    4.120515
+                                      |
+                             leistbez |
+                         no benefits  |   .4527471   1.851837     0.24   0.807    -5.645432    6.550927
+                               ALGII  |    1.06632   1.218839     0.87   0.382    -2.946783    5.079423
+                                      |
+                       daily_wage_med |  -.0495508   .0441525    -1.12   0.262      -.19487    .0957683
+                                    n |    .000281   .0010252     0.27   0.784    -.0030934    .0036553
+                                urban |   -1.28869   .9116485    -1.41   0.158     -4.28903    1.711651
+                     n_est_close_5yrs |  -.0078802   .0221406    -0.36   0.722    -.0807525    .0649921
+                                  alq |  -.1031402   .1578204    -0.65   0.513    -.6225191    .4162387
+                                moved |  -.0005702   1.062436    -0.00   1.000    -3.496996    3.495856
+                                      |
+                            subhealth |
+                      good/very good  |  -2.359766   .6939359    -3.40   0.001    -4.643888   -.0756435
+                                      |
+                                  mig |
+       migration background 1st gen.  |   3.235511   .8490784     3.81   0.000     .4394019     6.03162
+       migration background 2nd gen.  |  -.3676539   1.324389    -0.28   0.781    -4.726529    3.991222
+                                      |
+                             educ_kat |
+                       ISCED 3 und 4  |  -1.390401    .747813    -1.86   0.063    -3.851592    1.070791
+                       ISCED 5 und 6  |  -.6893587    1.03726    -0.66   0.506    -4.103575    2.724858
+                                      |
+                                _cons |   42.97627   4.011054    10.71   0.000     29.77534    56.17721
+-------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+             sd(ltunemp_quo) |   .0000505   .0100114      2.6e-288    9.9e+278
+ sd(ltunemp_quo#ltunemp_quo) |   .0002243    .039162      6.3e-254    8.0e+245
+                   sd(_cons) |   2.023888   .7760093      .5722772    7.157585
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   4.097004   .8103445      2.135593    7.859853
+-----------------------------+------------------------------------------------
+                sd(Residual) |   11.89288   .3198026      10.88431    12.99492
+------------------------------------------------------------------------------
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,840
+                                                Average RVI       =     0.0751
+                                                Largest FMI       =     0.0938
+DF adjustment:   Large sample                   DF:     min       =   5,611.03
+                                                        avg       =  12,110.24
+Within VCE type: Delta-method                           max       =  43,188.14
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : ltunemp_quo
+over         : high_gini
+
+1._at        : 0.high_gini
+                   ltunemp_quo     =          .1
+               1.high_gini
+                   ltunemp_quo     =          .1
+
+2._at        : 0.high_gini
+                   ltunemp_quo     =          .2
+               1.high_gini
+                   ltunemp_quo     =          .2
+
+3._at        : 0.high_gini
+                   ltunemp_quo     =          .3
+               1.high_gini
+                   ltunemp_quo     =          .3
+
+4._at        : 0.high_gini
+                   ltunemp_quo     =          .4
+               1.high_gini
+                   ltunemp_quo     =          .4
+
+5._at        : 0.high_gini
+                   ltunemp_quo     =          .5
+               1.high_gini
+                   ltunemp_quo     =          .5
+
+6._at        : 0.high_gini
+                   ltunemp_quo     =          .6
+               1.high_gini
+                   ltunemp_quo     =          .6
+
+--------------------------------------------------------------------------------------------------
+                                 |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                   _at#high_gini |
+  1#Low-inquality neighbourhood  |  -9.592461   17.48543    -0.55   0.583    -43.87067    24.68575
+1#High-inequality neighbourhood  |  -24.11609   14.71055    -1.64   0.101    -52.95389    4.721705
+  2#Low-inquality neighbourhood  |  -15.56449   62.66593    -0.25   0.804    -138.4092    107.2802
+2#High-inequality neighbourhood  |   21.60985   14.00028     1.54   0.123    -5.830957    49.05066
+  3#Low-inquality neighbourhood  |  -21.53651   113.5452    -0.19   0.850    -244.1175    201.0445
+3#High-inequality neighbourhood  |    67.3358   31.63021     2.13   0.033     5.337299    129.3343
+  4#Low-inquality neighbourhood  |  -27.50853   164.9309    -0.17   0.868    -350.8187    295.8016
+4#High-inequality neighbourhood  |   113.0617   51.28145     2.20   0.027     12.54265    213.5808
+  5#Low-inquality neighbourhood  |  -33.48056   216.4627    -0.15   0.877    -457.8062    390.8451
+5#High-inequality neighbourhood  |   158.7877   71.30189     2.23   0.026      19.0242    298.5512
+  6#Low-inquality neighbourhood  |  -39.45258   268.0564    -0.15   0.883     -564.915    486.0098
+6#High-inequality neighbourhood  |   204.5136   91.44937     2.24   0.025      25.2567    383.7706
+--------------------------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: ltunemp_quo high_gini
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\gini\marginsplot_ltunempq2_gini50.gph saved
+r; t=1424.16 21:00:35
+
+. 
+. grc1leg2 "${out}\gini\marginsplot_sgb2q2_gini50.gph" ///
+>                                 "${out}\gini\marginsplot_unempq2_gini50.gph" ///
+>                                 "${out}\gini\marginsplot_ltunempq2_gini50.gph", ycommon col(3)  xsize(15) ysize(6) ///
+>                                  legscale(medium)
+-grc1leg2- working...
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+r; t=3.29 21:00:38
+
+. graph export "${out}\robustness\marginsplot_gini50.pdf", as(pdf) replace        
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\marginsplot_gini50.pdf saved as PDF format
+r; t=0.07 21:00:38
+
+. 
+. //Only for one dimension: sanctioning by others
+. *Norm enforcement: Compare individuals from high and low inequality neihgborhoods
+. 
+. global          model_ind1_new          i.female child_* care c.age_c##c.age_c c.unemp_cur_n_c ///
+>                                                                 i.unemp_ep_ord depindug2_c ln_oecdincn_c search ib1.lei
+> stbez ///
+>                                                                 daily_wage_med n urban  n_est_close_5yrs alq 
+r; t=0.00 21:00:38
+
+. 
+. foreach ub in unemp sgb2 ltunemp {
+  2. foreach level in 99.9 {
+  3. cap drop        ind
+  4. mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                         mixed stigma_6 i.high_gini##c.`ub'_quo##c.`ub'_quo $model_ind1_new ///
+>                         $control_ind ///
+>                         || kreisnr: c.`ub'_quo##c.`ub'_quo || $level: ///
+>                         , mle difficult  covariance(unstructured) 
+  5. est store       m_nh`ub'_gini_total
+  6. }
+  7. 
+. mimrgns, dydx(`ub'_quo) at(`ub'_quo = (0 (0.1) 0.5)) by(high_gini) cmdmargins
+  8. marginsplot, x(`ub'_quo) recast(line)   yline(0) title("") ///
+>                 ylabel(,labsize(vlarge)) ytitle("Average marginal effect",size(vlarge)) ///
+>                 xlabel(,labsize(vlarge)) xtitle(,size(vlarge))
+  9. graph save "${out}\robustness\stigma6_marginsplot_`ub'q2_gini", replace 
+ 10. }
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,820
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.6        134
+           geo_grid_c~l |      1,177          1        1.5         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.0119
+                                                Largest FMI       =     0.0679
+DF adjustment:   Large sample                   DF:     min       =  10,685.02
+                                                        avg       =   3.61e+08
+                                                        max       =   6.19e+09
+Model F test:       Equal FMI                   F(  30, 8.0e+06)  =       6.67
+                                                Prob > F          =     0.0000
+
+---------------------------------------------------------------------------------------------------
+                         stigma_6 | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+----------------------------------+----------------------------------------------------------------
+                        high_gini |
+   High-inequality neighbourhood  |   .0671268   .2091653     0.32   0.748    -.6211422    .7553957
+                        unemp_quo |   .4591184   2.539936     0.18   0.857     -7.89908    8.817317
+                                  |
+            high_gini#c.unemp_quo |
+   High-inequality neighbourhood  |   -1.62877   2.850788    -0.57   0.568    -11.00971    7.752166
+                                  |
+          c.unemp_quo#c.unemp_quo |  -6.134593   9.744199    -0.63   0.529    -38.20133    25.93214
+                                  |
+high_gini#c.unemp_quo#c.unemp_quo |
+   High-inequality neighbourhood  |   8.764723   10.21602     0.86   0.391    -24.85408    42.38353
+                                  |
+                         1.female |   .1955259   .0481754     4.06   0.000     .0370035    .3540483
+                          child_3 |   .1864347   .0933527     2.00   0.046    -.1207449    .4936144
+                        child_4_9 |  -.1840003   .0791542    -2.32   0.020    -.4444592    .0764587
+                      child_10_17 |  -.0434955   .0691142    -0.63   0.529    -.2709176    .1839265
+                             care |   .1125202   .0827208     1.36   0.174    -.1596749    .3847152
+                            age_c |   .0037531   .0023472     1.60   0.110    -.0039704    .0114765
+                                  |
+                  c.age_c#c.age_c |  -.0001338   .0001751    -0.76   0.445    -.0007099    .0004424
+                                  |
+                    unemp_cur_n_c |   .0265868    .006071     4.38   0.000     .0066078    .0465657
+                                  |
+                     unemp_ep_ord |
+                   2 AL-Episoden  |   .1207377   .0668054     1.81   0.071    -.0991083    .3405837
+         3 oder mehr AL-Episoden  |    .066873   .0886655     0.75   0.451    -.2249097    .3586557
+                                  |
+                      depindug2_c |   .0542005   .0070749     7.66   0.000     .0309204    .0774805
+                    ln_oecdincn_c |   .0509014   .0628083     0.81   0.418    -.1557721    .2575749
+                           search |   .1384667   .0518119     2.67   0.008    -.0320247    .3089581
+                                  |
+                         leistbez |
+                     no benefits  |   .1428977   .1418314     1.01   0.314    -.3239316     .609727
+                           ALGII  |   .0293239   .0931211     0.31   0.753    -.2771771    .3358249
+                                  |
+                   daily_wage_med |  -.0044059   .0031213    -1.41   0.158    -.0146765    .0058647
+                                n |   .0000192   .0000707     0.27   0.786    -.0002135    .0002519
+                            urban |  -.1232614   .0584211    -2.11   0.035    -.3154976    .0689747
+                 n_est_close_5yrs |  -.0005664   .0015117    -0.37   0.708    -.0055407    .0044079
+                              alq |  -.0010583   .0100424    -0.11   0.916     -.034103    .0319865
+                                  |
+                        subhealth |
+                  good/very good  |  -.0984037   .0528109    -1.86   0.062    -.2721794     .075372
+                                  |
+                              mig |
+   migration background 1st gen.  |   .1736412   .0639504     2.72   0.007    -.0368053    .3840878
+   migration background 2nd gen.  |   .1050253   .1024106     1.03   0.305    -.2319763    .4420268
+                                  |
+                         educ_kat |
+                   ISCED 3 und 4  |  -.0990373      .0572    -1.73   0.083    -.2872554    .0891808
+                   ISCED 5 und 6  |  -.1446347   .0784282    -1.84   0.065    -.4027048    .1134353
+                                  |
+                            _cons |   2.680478   .3004335     8.92   0.000     1.691891    3.669066
+---------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+               sd(unemp_quo) |   .0000202   .0016837      1.4e-124    2.9e+114
+     sd(unemp_quo#unemp_quo) |   .0002709   .0513129      5.0e-275    1.5e+267
+                   sd(_cons) |   7.54e-07   .0001254      1.2e-244    4.7e+231
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   .1227443   .1215813       .004715    3.195349
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .9780125   .0219816      .9082914    1.053085
+------------------------------------------------------------------------------
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,820
+                                                Average RVI       =     0.0153
+                                                Largest FMI       =     0.0460
+DF adjustment:   Large sample                   DF:     min       =  23,283.98
+                                                        avg       = 8618620.79
+Within VCE type: Delta-method                           max       =   2.44e+07
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : unemp_quo
+over         : high_gini
+
+1._at        : 0.high_gini
+                   unemp_quo       =           0
+               1.high_gini
+                   unemp_quo       =           0
+
+2._at        : 0.high_gini
+                   unemp_quo       =          .1
+               1.high_gini
+                   unemp_quo       =          .1
+
+3._at        : 0.high_gini
+                   unemp_quo       =          .2
+               1.high_gini
+                   unemp_quo       =          .2
+
+4._at        : 0.high_gini
+                   unemp_quo       =          .3
+               1.high_gini
+                   unemp_quo       =          .3
+
+5._at        : 0.high_gini
+                   unemp_quo       =          .4
+               1.high_gini
+                   unemp_quo       =          .4
+
+6._at        : 0.high_gini
+                   unemp_quo       =          .5
+               1.high_gini
+                   unemp_quo       =          .5
+
+--------------------------------------------------------------------------------------------------
+                                 |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                   _at#high_gini |
+  1#Low-inquality neighbourhood  |   .4591184   2.539936     0.18   0.857    -4.519179    5.437416
+1#High-inequality neighbourhood  |  -1.169652   1.562285    -0.75   0.454    -4.231675    1.892371
+  2#Low-inquality neighbourhood  |  -.7678003   .9059751    -0.85   0.397    -2.543483    1.007883
+2#High-inequality neighbourhood  |   -.643626   .9692239    -0.66   0.507     -2.54327    1.256018
+  3#Low-inquality neighbourhood  |  -1.994719    1.66921    -1.20   0.232    -5.266481    1.277043
+3#High-inequality neighbourhood  |  -.1175999    .556898    -0.21   0.833      -1.2091    .9739001
+  4#Low-inquality neighbourhood  |  -3.221638   3.513928    -0.92   0.359    -10.10915    3.665879
+4#High-inequality neighbourhood  |   .4084262   .7436099     0.55   0.583    -1.049023    1.865875
+  5#Low-inquality neighbourhood  |  -4.448556   5.431857    -0.82   0.413     -15.0953    6.198191
+5#High-inequality neighbourhood  |   .9344522   1.291455     0.72   0.469    -1.596753    3.465658
+  6#Low-inquality neighbourhood  |  -5.675475    7.36603    -0.77   0.441    -20.11329    8.762339
+6#High-inequality neighbourhood  |   1.460478   1.911763     0.76   0.445    -2.286508    5.207464
+--------------------------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: unemp_quo high_gini
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\stigma6_marginsplot_unempq2_gini.gph saved
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,820
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.6        134
+           geo_grid_c~l |      1,177          1        1.5         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.0120
+                                                Largest FMI       =     0.0685
+DF adjustment:   Large sample                   DF:     min       =  10,485.11
+                                                        avg       =   3.17e+09
+                                                        max       =   8.31e+10
+Model F test:       Equal FMI                   F(  30, 7.9e+06)  =       6.66
+                                                Prob > F          =     0.0000
+
+-------------------------------------------------------------------------------------------------
+                       stigma_6 | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+--------------------------------+----------------------------------------------------------------
+                      high_gini |
+ High-inequality neighbourhood  |   .0455679   .1897287     0.24   0.810    -.5787421    .6698778
+                       sgb2_quo |  -.0502848   1.840094    -0.03   0.978    -6.105538    6.004969
+                                |
+           high_gini#c.sgb2_quo |
+ High-inequality neighbourhood  |  -.8211666    2.17445    -0.38   0.706    -7.976469    6.334136
+                                |
+          c.sgb2_quo#c.sgb2_quo |  -2.761759   6.006742    -0.46   0.646    -22.52931    17.00579
+                                |
+high_gini#c.sgb2_quo#c.sgb2_quo |
+ High-inequality neighbourhood  |   4.116642   6.459342     0.64   0.524    -17.13967    25.37296
+                                |
+                       1.female |   .1966058   .0482042     4.08   0.000     .0379886    .3552231
+                        child_3 |   .1852669    .093368     1.98   0.047    -.1219629    .4924968
+                      child_4_9 |  -.1839386   .0791788    -2.32   0.020    -.4444787    .0766014
+                    child_10_17 |  -.0453808   .0690568    -0.66   0.511    -.2726142    .1818526
+                           care |   .1143736    .082703     1.38   0.167    -.1577629    .3865101
+                          age_c |   .0036368   .0023467     1.55   0.121     -.004085    .0113586
+                                |
+                c.age_c#c.age_c |  -.0001343   .0001752    -0.77   0.443    -.0007107    .0004421
+                                |
+                  unemp_cur_n_c |   .0265689   .0060768     4.37   0.000     .0065708    .0465669
+                                |
+                   unemp_ep_ord |
+                 2 AL-Episoden  |   .1205719   .0668305     1.80   0.071    -.0993562    .3405001
+       3 oder mehr AL-Episoden  |   .0662639   .0886613     0.75   0.455    -.2255046    .3580325
+                                |
+                    depindug2_c |   .0542614   .0070735     7.67   0.000     .0309858    .0775369
+                  ln_oecdincn_c |   .0526222   .0627744     0.84   0.402    -.1539397    .2591841
+                         search |   .1393974   .0518022     2.69   0.007    -.0310622    .3098569
+                                |
+                       leistbez |
+                   no benefits  |   .1343565   .1417528     0.95   0.343    -.3322164    .6009293
+                         ALGII  |   .0323842   .0931161     0.35   0.728    -.2740989    .3388673
+                                |
+                 daily_wage_med |  -.0048751   .0031839    -1.53   0.126    -.0153517    .0056015
+                              n |   .0000202   .0000707     0.29   0.775    -.0002125     .000253
+                          urban |  -.1235819   .0584974    -2.11   0.035    -.3160693    .0689055
+               n_est_close_5yrs |  -.0005634   .0015105    -0.37   0.709    -.0055336    .0044068
+                            alq |  -.0006807   .0100883    -0.07   0.946    -.0338766    .0325151
+                                |
+                      subhealth |
+                good/very good  |  -.0983384   .0528478    -1.86   0.063    -.2722355    .0755586
+                                |
+                            mig |
+ migration background 1st gen.  |   .1756098   .0640116     2.74   0.006    -.0350382    .3862579
+ migration background 2nd gen.  |   .1064494   .1024791     1.04   0.299    -.2307778    .4436766
+                                |
+                       educ_kat |
+                 ISCED 3 und 4  |  -.1019353   .0572367    -1.78   0.075    -.2902743    .0864036
+                 ISCED 5 und 6  |  -.1455701   .0784904    -1.85   0.064    -.4038449    .1127047
+                                |
+                          _cons |    2.72781    .288392     9.46   0.000     1.778846    3.676774
+-------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+                sd(sgb2_quo) |   .0000117   .0026113             0           .
+       sd(sgb2_quo#sgb2_quo) |    .000082    .015781      9.2e-280    7.3e+270
+                   sd(_cons) |   3.97e-07   .0001473             0           .
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   .1179528   .1268484      .0034267    4.060149
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .9786975   .0220079      .9088942    1.053862
+------------------------------------------------------------------------------
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,820
+                                                Average RVI       =     0.0156
+                                                Largest FMI       =     0.0479
+DF adjustment:   Large sample                   DF:     min       =  21,471.51
+                                                        avg       = 7396416.33
+Within VCE type: Delta-method                           max       =   3.79e+07
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : sgb2_quo
+over         : high_gini
+
+1._at        : 0.high_gini
+                   sgb2_quo        =           0
+               1.high_gini
+                   sgb2_quo        =           0
+
+2._at        : 0.high_gini
+                   sgb2_quo        =          .1
+               1.high_gini
+                   sgb2_quo        =          .1
+
+3._at        : 0.high_gini
+                   sgb2_quo        =          .2
+               1.high_gini
+                   sgb2_quo        =          .2
+
+4._at        : 0.high_gini
+                   sgb2_quo        =          .3
+               1.high_gini
+                   sgb2_quo        =          .3
+
+5._at        : 0.high_gini
+                   sgb2_quo        =          .4
+               1.high_gini
+                   sgb2_quo        =          .4
+
+6._at        : 0.high_gini
+                   sgb2_quo        =          .5
+               1.high_gini
+                   sgb2_quo        =          .5
+
+--------------------------------------------------------------------------------------------------
+                                 |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                   _at#high_gini |
+  1#Low-inquality neighbourhood  |  -.0502848   1.840094    -0.03   0.978    -3.656894    3.556325
+1#High-inequality neighbourhood  |  -.8714514    1.35482    -0.64   0.520     -3.52685    1.783947
+  2#Low-inquality neighbourhood  |  -.6026366   .8017083    -0.75   0.452    -2.173963    .9686901
+2#High-inequality neighbourhood  |  -.6004749   .8904835    -0.67   0.500    -2.345791    1.144841
+  3#Low-inquality neighbourhood  |  -1.154988   .8865676    -1.30   0.193    -2.892707      .58273
+3#High-inequality neighbourhood  |  -.3294984   .5122214    -0.64   0.520    -1.333434    .6744372
+  4#Low-inquality neighbourhood  |   -1.70734   1.953393    -0.87   0.382    -5.536136    2.121455
+4#High-inequality neighbourhood  |  -.0585218   .4937271    -0.12   0.906    -1.026209    .9091657
+  5#Low-inquality neighbourhood  |  -2.259692   3.119609    -0.72   0.469    -8.374344     3.85496
+5#High-inequality neighbourhood  |   .2124546   .8585733     0.25   0.805    -1.470318    1.895228
+  6#Low-inquality neighbourhood  |  -2.812044   4.305189    -0.65   0.514     -11.2505    5.626413
+6#High-inequality neighbourhood  |   .4834311   1.320044     0.37   0.714    -2.103808     3.07067
+--------------------------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: sgb2_quo high_gini
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\stigma6_marginsplot_sgb2q2_gini.gph saved
+
+Imputations (50):
+  .x.......10.........20......x..30x........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         47
+Mixed-effects ML regression                     Number of obs     =      1,820
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.6        134
+           geo_grid_c~l |      1,177          1        1.5         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.0125
+                                                Largest FMI       =     0.0680
+DF adjustment:   Large sample                   DF:     min       =   9,998.79
+                                                        avg       =   1.09e+09
+                                                        max       =   2.44e+10
+Model F test:       Equal FMI                   F(  30, 7.0e+06)  =       6.56
+                                                Prob > F          =     0.0000
+
+-------------------------------------------------------------------------------------------------------
+                             stigma_6 | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+--------------------------------------+----------------------------------------------------------------
+                            high_gini |
+       High-inequality neighbourhood  |   .0507616   .1980697     0.26   0.798    -.6009978     .702521
+                          ltunemp_quo |   .4896857   3.302276     0.15   0.882     -10.3776    11.35697
+                                      |
+              high_gini#c.ltunemp_quo |
+       High-inequality neighbourhood  |  -1.817158   3.885059    -0.47   0.640    -14.60176    10.96744
+                                      |
+          c.ltunemp_quo#c.ltunemp_quo |  -8.554733   18.89506    -0.45   0.651     -70.7395    53.63004
+                                      |
+high_gini#c.ltunemp_quo#c.ltunemp_quo |
+       High-inequality neighbourhood  |   13.39719    20.1562     0.66   0.506    -52.93578    79.73017
+                                      |
+                             1.female |   .1953206   .0481588     4.06   0.000     .0368526    .3537886
+                              child_3 |   .1880032   .0933602     2.01   0.044    -.1192011    .4952075
+                            child_4_9 |  -.1849842   .0791381    -2.34   0.019    -.4453903    .0754219
+                          child_10_17 |  -.0450469   .0691153    -0.65   0.515    -.2724727    .1823789
+                                 care |   .1156821   .0827196     1.40   0.162    -.1565089     .387873
+                                age_c |   .0037705   .0023469     1.61   0.108    -.0039522    .0114931
+                                      |
+                      c.age_c#c.age_c |  -.0001347   .0001751    -0.77   0.442    -.0007109    .0004414
+                                      |
+                        unemp_cur_n_c |   .0263784   .0060796     4.34   0.000     .0063709     .046386
+                                      |
+                         unemp_ep_ord |
+                       2 AL-Episoden  |    .120007   .0668549     1.80   0.073    -.1000044    .3400183
+             3 oder mehr AL-Episoden  |   .0664878   .0887732     0.75   0.454    -.2256539    .3586295
+                                      |
+                          depindug2_c |    .054179   .0070761     7.66   0.000     .0308951     .077463
+                        ln_oecdincn_c |   .0516699    .062827     0.82   0.411    -.1550653    .2584051
+                               search |   .1384496   .0518287     2.67   0.008    -.0320977    .3089969
+                                      |
+                             leistbez |
+                         no benefits  |    .134994    .141385     0.95   0.340    -.3303551    .6003432
+                               ALGII  |   .0265496   .0932154     0.28   0.776    -.2802687     .333368
+                                      |
+                       daily_wage_med |  -.0038185   .0030882    -1.24   0.216    -.0139804    .0063434
+                                    n |   .0000194   .0000709     0.27   0.784    -.0002139    .0002527
+                                urban |  -.1161953   .0589126    -1.97   0.049    -.3100489    .0776582
+                     n_est_close_5yrs |  -.0005736   .0015214    -0.38   0.706    -.0055799    .0044328
+                                  alq |  -.0020573    .010112    -0.20   0.839    -.0353313    .0312167
+                                      |
+                            subhealth |
+                      good/very good  |  -.0957127   .0528291    -1.81   0.070    -.2695482    .0781228
+                                      |
+                                  mig |
+       migration background 1st gen.  |     .17251   .0639875     2.70   0.007    -.0380608    .3830808
+       migration background 2nd gen.  |   .1016576   .1024692     0.99   0.321    -.2355388     .438854
+                                      |
+                             educ_kat |
+                       ISCED 3 und 4  |  -.0999812   .0572451    -1.75   0.081    -.2883477    .0883852
+                       ISCED 5 und 6  |   -.142804   .0784844    -1.82   0.069    -.4010591    .1154511
+                                      |
+                                _cons |   2.632473   .2839023     9.27   0.000     1.698282    3.566664
+-------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+             sd(ltunemp_quo) |   1.92e-06   .0006384             0           .
+ sd(ltunemp_quo#ltunemp_quo) |   1.855339   3.212746      .0062206    553.3709
+                   sd(_cons) |   4.37e-07   .0001218             0           .
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   .1034702   .1667669      .0005147    20.80107
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .9797023   .0227254      .9077063    1.057409
+------------------------------------------------------------------------------
+Note: 3 imputations ignored because of a failure to estimate parameters
+note: option predict() not specified; predict(xb) assumed
+convergence not achieved
+convergence not achieved
+convergence not achieved
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,820
+                                                Average RVI       =     0.0172
+                                                Largest FMI       =     0.0535
+DF adjustment:   Large sample                   DF:     min       =  17,212.06
+                                                        avg       =   2.21e+07
+Within VCE type: Delta-method                           max       =   5.35e+07
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : ltunemp_quo
+over         : high_gini
+
+1._at        : 0.high_gini
+                   ltunemp_quo     =           0
+               1.high_gini
+                   ltunemp_quo     =           0
+
+2._at        : 0.high_gini
+                   ltunemp_quo     =          .1
+               1.high_gini
+                   ltunemp_quo     =          .1
+
+3._at        : 0.high_gini
+                   ltunemp_quo     =          .2
+               1.high_gini
+                   ltunemp_quo     =          .2
+
+4._at        : 0.high_gini
+                   ltunemp_quo     =          .3
+               1.high_gini
+                   ltunemp_quo     =          .3
+
+5._at        : 0.high_gini
+                   ltunemp_quo     =          .4
+               1.high_gini
+                   ltunemp_quo     =          .4
+
+6._at        : 0.high_gini
+                   ltunemp_quo     =          .5
+               1.high_gini
+                   ltunemp_quo     =          .5
+
+--------------------------------------------------------------------------------------------------
+                                 |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                   _at#high_gini |
+  1#Low-inquality neighbourhood  |   .4759681   3.302865     0.14   0.885     -5.99776    6.949696
+1#High-inequality neighbourhood  |  -1.330347   2.323386    -0.57   0.567      -5.8841    3.223407
+  2#Low-inquality neighbourhood  |  -1.219243   1.236401    -0.99   0.324    -3.642621    1.204136
+2#High-inequality neighbourhood  |  -.3597727   1.038516    -0.35   0.729    -2.395226    1.675681
+  3#Low-inquality neighbourhood  |  -2.914453   4.553433    -0.64   0.522    -11.83965     6.01074
+3#High-inequality neighbourhood  |   .6108013   1.032974     0.59   0.554     -1.41379    2.635393
+  4#Low-inquality neighbourhood  |  -4.609664    8.27793    -0.56   0.578     -20.8352    11.61587
+4#High-inequality neighbourhood  |   1.581375   2.315963     0.68   0.495    -2.957828    6.120579
+  5#Low-inquality neighbourhood  |  -6.304874   12.03743    -0.52   0.600    -29.89935     17.2896
+5#High-inequality neighbourhood  |   2.551949    3.73744     0.68   0.495    -4.773298    9.877197
+  6#Low-inquality neighbourhood  |  -8.000085   15.80698    -0.51   0.613    -38.98319    22.98302
+6#High-inequality neighbourhood  |   3.522523   5.184724     0.68   0.497    -6.639348    13.68439
+--------------------------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: ltunemp_quo high_gini
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\stigma6_marginsplot_ltunempq2_gini.gph saved
+r; t=2064.08 21:35:02
+
+. 
+. *average marginal effects plot
+. grc1leg2 "${out}\robustness\stigma6_marginsplot_sgb2q2_gini.gph" ///
+>                                 "${out}\robustness\stigma6_marginsplot_unempq2_gini.gph" ///
+>                                 "${out}\robustness\stigma6_marginsplot_ltunempq2_gini.gph", ycommon col(3)  xsize(15) y
+> size(5) ///
+>                                 legscale(medium)
+-grc1leg2- working...
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+r; t=4.91 21:35:07
+
+.                                 
+. graph export "${out}\robustness\stigma6_marginsplot_gini.pdf", as(pdf) replace  
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\stigma6_marginsplot_gini.pdf saved as PDF
+    format
+r; t=0.12 21:35:08
+
+. 
+. 
+. ********************************************************************************
+. **# social identity or personal experiences
+. tab stigma_6,nol
+
+ fühlt sich |
+      pers. |
+  betroffen |
+        von |
+Vorurteilen |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     20,145       21.70       21.70
+          2 |     33,762       36.37       58.08
+          3 |     20,094       21.65       79.73
+          4 |     18,819       20.27      100.00
+------------+-----------------------------------
+      Total |     92,820      100.00
+r; t=0.00 21:35:08
+
+. gen dstigma_6 = stigma_6>2 & stigma_6<.
+r; t=0.00 21:35:08
+
+. replace dstigma_6=. if stigma_6==.
+(1,020 real changes made, 1,020 to missing)
+r; t=0.01 21:35:08
+
+. tab dstigma_6, mis
+
+  dstigma_6 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     53,907       57.45       57.45
+          1 |     38,913       41.47       98.91
+          . |      1,020        1.09      100.00
+------------+-----------------------------------
+      Total |     93,840      100.00
+r; t=0.00 21:35:08
+
+. 
+. foreach ub in sgb2 unemp ltunemp  {
+  2. 
+.         **Total
+.         foreach level in 99.9 {
+  3.         cap drop        ind
+  4.         mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                                 mixed dstigma_6 c.`ub'_quo##c.`ub'_quo $model_ind1_new  ///
+>                                 $control_ind || kreisnr: c.`ub'_quo##c.`ub'_quo || $level: ///
+>                                 , mle difficult  covariance(unstructured) 
+  5.         est store       m_nh`ub'_total
+  6.         }
+  7. 
+.         mimrgns, dydx(`ub'_quo) at(`ub'_quo = (0 (0.1) 0.5))  cmdmargins
+  8.         marginsplot, x(`ub'_quo) recast(line)   yline(0) title(" ") ///
+>                         ylabel(,labsize(vlarge)) ytitle("Average marginal effect",size(vlarge)) ///
+>                         xlabel(,labsize(vlarge)) xtitle(,size(vlarge))
+  9.                  
+.         
+.         graph save "${out}\robustness\dstigma6_`ub'q2", replace 
+ 10.         
+. }
+
+Imputations (50):
+  ......x..10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         49
+Mixed-effects ML regression                     Number of obs     =      1,820
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.6        134
+           geo_grid_c~l |      1,177          1        1.5         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =          .
+                                                Largest FMI       =          .
+DF adjustment:   Large sample                   DF:     min       =       0.00
+                                                        avg       =          .
+                                                        max       =          .
+Model F test:       Equal FMI                   F(  27, 1.0e+07)  =       5.71
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------------------------
+                     dstigma_6 | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+-------------------------------+----------------------------------------------------------------
+                      sgb2_quo |  -.5204991   .4272606    -1.22   0.223    -1.926414    .8854159
+                               |
+         c.sgb2_quo#c.sgb2_quo |   1.050827   .8810584     1.19   0.233    -1.848325    3.949978
+                               |
+                      1.female |   .0728266    .023126     3.15   0.002    -.0032702    .1489234
+                       child_3 |   .0725843   .0447733     1.62   0.105    -.0747433    .2199118
+                     child_4_9 |  -.0442371   .0379403    -1.17   0.244    -.1690806    .0806064
+                   child_10_17 |  -.0085506   .0331008    -0.26   0.796    -.1174697    .1003685
+                          care |   .0150818   .0396545     0.38   0.704    -.1154023    .1455659
+                         age_c |   .0018367   .0011253     1.63   0.103     -.001866    .0055394
+                               |
+               c.age_c#c.age_c |  -.0000426   .0000841    -0.51   0.613    -.0003192    .0002341
+                               |
+                 unemp_cur_n_c |   .0106157   .0029036     3.66   0.000     .0010607    .0201708
+                               |
+                  unemp_ep_ord |
+                2 AL-Episoden  |   .0598604   .0319051     1.88   0.061    -.0451291    .1648498
+      3 oder mehr AL-Episoden  |   .0405165   .0423529     0.96   0.339    -.0988544    .1798873
+                               |
+                   depindug2_c |   .0233518   .0033901     6.89   0.000     .0121966     .034507
+                 ln_oecdincn_c |   .0052334   .0300975     0.17   0.862    -.0938038    .1042707
+                        search |    .042557   .0248082     1.72   0.086    -.0390757    .1241898
+                               |
+                      leistbez |
+                  no benefits  |   .0756517   .0681228     1.11   0.267    -.1485768    .2998803
+                        ALGII  |   .0342712   .0446743     0.77   0.443    -.1127699    .1813123
+                               |
+                daily_wage_med |  -.0022566   .0015168    -1.49   0.137    -.0072476    .0027344
+                             n |  -3.60e-06   .0000335    -0.11   0.914    -.0001137    .0001065
+                         urban |  -.0424968   .0273101    -1.56   0.120    -.1323612    .0473677
+              n_est_close_5yrs |  -.0000245   .0007142    -0.03   0.973    -.0023745    .0023254
+                           alq |   -.004341   .0047704    -0.91   0.363    -.0200381     .011356
+                               |
+                     subhealth |
+               good/very good  |  -.0306599   .0253579    -1.21   0.227    -.1141008    .0527809
+                               |
+                           mig |
+migration background 1st gen.  |    .063145   .0306712     2.06   0.040    -.0377866    .1640766
+migration background 2nd gen.  |  -.0042384   .0489281    -0.09   0.931    -.1652414    .1567646
+                               |
+                      educ_kat |
+                ISCED 3 und 4  |  -.0673303   .0273985    -2.46   0.014    -.1574857    .0228251
+                ISCED 5 und 6  |  -.0771374     .03761    -2.05   0.040    -.2008942    .0466194
+                               |
+                         _cons |   .6300443   .1320983     4.77   0.000     .1953703    1.064718
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+                sd(sgb2_quo) |   6.73e-06   .0028809             0           .
+       sd(sgb2_quo#sgb2_quo) |   .0000763   .0161617      2.3e-307    2.6e+298
+                   sd(_cons) |   4.79e-08   .0000244             0           .
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   .0000204          .             .           .
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .4735219   .0078522      .4483764    .5000775
+------------------------------------------------------------------------------
+Note: 1 imputation ignored because of a failure to estimate parameters
+note: option predict() not specified; predict(xb) assumed
+convergence not achieved
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,820
+                                                Average RVI       =     0.0046
+                                                Largest FMI       =     0.0056
+DF adjustment:   Large sample                   DF:     min       = 1551552.77
+                                                        avg       = 2413027.83
+Within VCE type: Delta-method                           max       = 3686461.13
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : sgb2_quo
+
+1._at        : sgb2_quo        =           0
+
+2._at        : sgb2_quo        =          .1
+
+3._at        : sgb2_quo        =          .2
+
+4._at        : sgb2_quo        =          .3
+
+5._at        : sgb2_quo        =          .4
+
+6._at        : sgb2_quo        =          .5
+
+------------------------------------------------------------------------------
+             |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |  -.5212682   .4272727    -1.22   0.222    -1.358708    .3161716
+          2  |  -.3109448   .2744661    -1.13   0.257    -.8488888    .2269992
+          3  |  -.1006214   .1737739    -0.58   0.563    -.4412122    .2399693
+          4  |    .109702   .2171618     0.51   0.613    -.3159274    .5353314
+          5  |   .3200254   .3552706     0.90   0.368    -.3762926    1.016343
+          6  |   .5303488   .5170796     1.03   0.305    -.4831091    1.543807
+------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: sgb2_quo
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\dstigma6_sgb2q2.gph saved
+
+Imputations (50):
+  .........10.........20...x.....30...x.....40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         48
+Mixed-effects ML regression                     Number of obs     =      1,820
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.6        134
+           geo_grid_c~l |      1,177          1        1.5         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =          .
+                                                Largest FMI       =          .
+DF adjustment:   Large sample                   DF:     min       =       0.00
+                                                        avg       =          .
+                                                        max       =          .
+Model F test:       Equal FMI                   F(  27, 9.7e+06)  =       5.69
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------------------------
+                     dstigma_6 | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+-------------------------------+----------------------------------------------------------------
+                     unemp_quo |  -.4441306   .5297826    -0.84   0.402    -2.187398    1.299137
+                               |
+       c.unemp_quo#c.unemp_quo |   1.207928   1.237516     0.98   0.329    -2.864157    5.280013
+                               |
+                      1.female |   .0729424   .0231193     3.16   0.002    -.0031323     .149017
+                       child_3 |   .0729993   .0447796     1.63   0.103    -.0743493    .2203478
+                     child_4_9 |  -.0446719   .0379501    -1.18   0.239    -.1695478     .080204
+                   child_10_17 |  -.0092351   .0331242    -0.28   0.780    -.1182311     .099761
+                          care |    .015189   .0396668     0.38   0.702    -.1153358    .1457137
+                         age_c |   .0018569   .0011253     1.65   0.099    -.0018459    .0055597
+                               |
+               c.age_c#c.age_c |  -.0000433   .0000841    -0.51   0.607      -.00032    .0002334
+                               |
+                 unemp_cur_n_c |   .0105784    .002903     3.64   0.000     .0010255    .0201314
+                               |
+                  unemp_ep_ord |
+                2 AL-Episoden  |   .0592088    .031929     1.85   0.064    -.0458602    .1642779
+      3 oder mehr AL-Episoden  |   .0402044   .0423938     0.95   0.343    -.0993022     .179711
+                               |
+                   depindug2_c |   .0233857   .0033908     6.90   0.000     .0122283     .034543
+                 ln_oecdincn_c |   .0048745   .0301057     0.16   0.871    -.0941897    .1039388
+                        search |   .0423899   .0248244     1.71   0.088    -.0392961     .124076
+                               |
+                      leistbez |
+                  no benefits  |   .0753861   .0682415     1.10   0.269    -.1492384    .3000107
+                        ALGII  |   .0324296   .0447141     0.73   0.468    -.1147456    .1796049
+                               |
+                daily_wage_med |  -.0018463   .0014859    -1.24   0.214    -.0067356     .003043
+                             n |  -5.54e-06   .0000334    -0.17   0.868    -.0001154    .0001043
+                         urban |  -.0435249   .0272888    -1.59   0.111    -.1333194    .0462697
+              n_est_close_5yrs |  -5.40e-06   .0007134    -0.01   0.994    -.0023527    .0023419
+                           alq |  -.0049845   .0047515    -1.05   0.294    -.0206194    .0106504
+                               |
+                     subhealth |
+               good/very good  |   -.029745   .0253543    -1.17   0.241     -.113174     .053684
+                               |
+                           mig |
+migration background 1st gen.  |   .0612056    .030642     2.00   0.046    -.0396298    .1620409
+migration background 2nd gen.  |  -.0047528   .0489577    -0.10   0.923    -.1658534    .1563478
+                               |
+                      educ_kat |
+                ISCED 3 und 4  |  -.0659516   .0273794    -2.41   0.016    -.1560444    .0241412
+                ISCED 5 und 6  |  -.0756482   .0376105    -2.01   0.044    -.1994065    .0481102
+                               |
+                         _cons |   .5964942   .1342084     4.44   0.000     .1548766    1.038112
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+               sd(unemp_quo) |   8.14e-06   .0030774             0           .
+     sd(unemp_quo#unemp_quo) |   .0002989   .0349979      1.4e-171    6.2e+163
+                   sd(_cons) |   5.10e-08   .0000295             0           .
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   .0000174          .             .           .
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .4735973   .0078534      .4484478    .5001572
+------------------------------------------------------------------------------
+Note: 2 imputations ignored because of a failure to estimate parameters
+note: option predict() not specified; predict(xb) assumed
+convergence not achieved
+convergence not achieved
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,820
+                                                Average RVI       =     0.0044
+                                                Largest FMI       =     0.0061
+DF adjustment:   Large sample                   DF:     min       = 1333909.27
+                                                        avg       = 3445725.56
+Within VCE type: Delta-method                           max       = 6474439.33
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : unemp_quo
+
+1._at        : unemp_quo       =           0
+
+2._at        : unemp_quo       =          .1
+
+3._at        : unemp_quo       =          .2
+
+4._at        : unemp_quo       =          .3
+
+5._at        : unemp_quo       =          .4
+
+6._at        : unemp_quo       =          .5
+
+------------------------------------------------------------------------------
+             |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |  -.4430691   .5297499    -0.84   0.403    -1.481361    .5952224
+          2  |  -.2018718   .3185795    -0.63   0.526    -.8262767    .4225332
+          3  |   .0393256    .211772     0.19   0.853    -.3757401    .4543913
+          4  |    .280523   .3327137     0.84   0.399    -.3715839    .9326299
+          5  |   .5217203   .5468509     0.95   0.340    -.5500879    1.593529
+          6  |   .7629177   .7809544     0.98   0.329    -.7677253    2.293561
+------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: unemp_quo
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\dstigma6_unempq2.gph saved
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,820
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.6        134
+           geo_grid_c~l |      1,177          1        1.5         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =          .
+                                                Largest FMI       =          .
+DF adjustment:   Large sample                   DF:     min       =       0.00
+                                                        avg       =          .
+                                                        max       =          .
+Model F test:       Equal FMI                   F(  27, 1.1e+07)  =       5.70
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------------------------
+                     dstigma_6 | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+-------------------------------+----------------------------------------------------------------
+                   ltunemp_quo |  -.4108686    .736559    -0.56   0.577    -2.834543    2.012805
+                               |
+   c.ltunemp_quo#c.ltunemp_quo |   2.148313   2.535455     0.85   0.397    -6.194686    10.49131
+                               |
+                      1.female |   .0732309    .023099     3.17   0.002    -.0027769    .1492386
+                       child_3 |   .0730809   .0447781     1.63   0.103    -.0742625    .2204243
+                     child_4_9 |  -.0460008   .0379536    -1.21   0.226    -.1708882    .0788867
+                   child_10_17 |  -.0105963   .0331245    -0.32   0.749    -.1195934    .0984009
+                          care |   .0158273   .0396557     0.40   0.690    -.1146608    .1463154
+                         age_c |    .001851   .0011252     1.64   0.100    -.0018517    .0055536
+                               |
+               c.age_c#c.age_c |  -.0000442   .0000841    -0.53   0.599    -.0003208    .0002323
+                               |
+                 unemp_cur_n_c |   .0105718   .0029015     3.64   0.000     .0010237    .0201198
+                               |
+                  unemp_ep_ord |
+                2 AL-Episoden  |    .058617   .0319159     1.84   0.066    -.0464084    .1636424
+      3 oder mehr AL-Episoden  |   .0401295   .0423858     0.95   0.344    -.0993499     .179609
+                               |
+                   depindug2_c |   .0232908   .0033915     6.87   0.000     .0121308    .0344508
+                 ln_oecdincn_c |   .0050924   .0301004     0.17   0.866    -.0939544    .1041393
+                        search |   .0427613   .0248146     1.72   0.085    -.0388926    .1244152
+                               |
+                      leistbez |
+                  no benefits  |   .0746504   .0681252     1.10   0.273    -.1495832     .298884
+                        ALGII  |   .0310943   .0446565     0.70   0.486    -.1158873    .1780759
+                               |
+                daily_wage_med |  -.0013699    .001466    -0.93   0.350    -.0061937    .0034539
+                             n |  -6.25e-06   .0000334    -0.19   0.852    -.0001162    .0001037
+                         urban |  -.0450689   .0273276    -1.65   0.099     -.134991    .0448533
+              n_est_close_5yrs |  -.0000138   .0007137    -0.02   0.985    -.0023622    .0023345
+                           alq |  -.0055041   .0047611    -1.16   0.248    -.0211707    .0101626
+                               |
+                     subhealth |
+               good/very good  |  -.0292766   .0253515    -1.15   0.248    -.1126965    .0541433
+                               |
+                           mig |
+migration background 1st gen.  |   .0606905   .0306326     1.98   0.048    -.0401135    .1614944
+migration background 2nd gen.  |  -.0053187   .0489509    -0.11   0.913    -.1663964     .155759
+                               |
+                      educ_kat |
+                ISCED 3 und 4  |  -.0659215   .0273853    -2.41   0.016    -.1560336    .0241907
+                ISCED 5 und 6  |  -.0751704   .0376045    -2.00   0.046     -.198909    .0485681
+                               |
+                         _cons |   .5540378   .1301687     4.26   0.000     .1257132    .9823625
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+             sd(ltunemp_quo) |   .0000107   .0048259             0           .
+ sd(ltunemp_quo#ltunemp_quo) |   .0001895   .0490651             0           .
+                   sd(_cons) |   1.86e-07   .0000877             0           .
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   9.76e-07          .             .           .
+-----------------------------+------------------------------------------------
+                sd(Residual) |   .4735793    .007853      .4484312    .5001377
+------------------------------------------------------------------------------
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,820
+                                                Average RVI       =     0.0050
+                                                Largest FMI       =     0.0069
+DF adjustment:   Large sample                   DF:     min       = 1032430.04
+                                                        avg       = 2056803.75
+Within VCE type: Delta-method                           max       = 4226269.19
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : ltunemp_quo
+
+1._at        : ltunemp_quo     =           0
+
+2._at        : ltunemp_quo     =          .1
+
+3._at        : ltunemp_quo     =          .2
+
+4._at        : ltunemp_quo     =          .3
+
+5._at        : ltunemp_quo     =          .4
+
+6._at        : ltunemp_quo     =          .5
+
+------------------------------------------------------------------------------
+             |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |  -.4108686    .736559    -0.56   0.577      -1.8545    1.032762
+          2  |   .0187939   .3302636     0.06   0.955    -.6285116    .6660993
+          3  |   .4484564   .4357882     1.03   0.303     -.405673    1.302586
+          4  |    .878119   .8860198     0.99   0.322    -.8584488    2.614687
+          5  |   1.307781   1.376384     0.95   0.342    -1.389883    4.005446
+          6  |   1.737444   1.875665     0.93   0.354    -1.938794    5.413682
+------------------------------------------------------------------------------
+
+Variables that uniquely identify margins: ltunemp_quo
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\dstigma6_ltunempq2.gph saved
+r; t=1971.96 22:08:00
+
+. 
+. grc1leg2 "${out}\robustness\dstigma6_sgb2q2" ///
+>                         "${out}\robustness\dstigma6_unempq2" ///
+>                         "${out}\robustness\dstigma6_ltunempq2" ///
+>                                         , ycommon col(3)  xsize(15) ysize(6) 
+-grc1leg2- working...
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+r; t=3.08 22:08:03
+
+.                                         
+. graph export "${out}\robustness\dstigma6_ALLq2.pdf", replace as(pdf)
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\dstigma6_ALLq2.pdf saved as PDF format
+r; t=0.07 22:08:03
+
+. 
+. 
+. 
+. ********************************************************************************
+. **# further robustness checks
+. global          model_ind1_new          i.female child_* care c.age_c##c.age_c c.unemp_cur_n_c ///
+>                                                                 i.unemp_ep_ord depindug2_c ln_oecdincn_c search ib1.lei
+> stbez ///
+>                                                                 daily_wage_med n urban  n_est_close_5yrs alq high_gini 
+> moved
+r; t=0.00 22:08:03
+
+.                                                                 
+. lab var unemp_quo "Unemployment"
+r; t=0.00 22:08:03
+
+.                                                                 
+. //individuals living in small vs. large grids
+. cap drop med_n
+r; t=0.00 22:08:03
+
+. sum n , d
+
+                number of individuals (home)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%           19              2
+ 5%           87              2
+10%        163.5              2       Obs              93,840
+25%        448.5              2       Sum of wgt.      93,840
+
+50%       1215.5                      Mean           1716.371
+                        Largest       Std. dev.      1785.746
+75%         2298          12300
+90%       4015.5          12300       Variance        3188890
+95%       5468.5          12300       Skewness       2.022825
+99%         8343          12300       Kurtosis       8.095488
+r; t=0.05 22:08:03
+
+. gen med_n = n > r(p50)
+r; t=0.00 22:08:03
+
+. lab define med_n 0 "< median" 1 "> median"
+r; t=0.00 22:08:03
+
+. lab value med_n med_n
+r; t=0.00 22:08:03
+
+. 
+. **triple interaction: squared UE and size
+.         foreach level in 99.9 {
+  2.         cap drop        ind
+  3.         mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                                 mixed stig_con i.med_n##c.unemp_quo##c.unemp_quo $model_ind1_new  $control_ind ///
+>                                 || kreisnr: c.unemp_quo##c.unemp_quo || $level: ///
+>                                 , mle difficult  covariance(unstructured) 
+  4.         est store       m_nhunemp_size
+  5.         }       
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,840
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.7        135
+           geo_grid_c~l |      1,185          1        1.6         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.0703
+                                                Largest FMI       =     0.1612
+DF adjustment:   Large sample                   DF:     min       =   1,905.68
+                                                        avg       =   1.79e+08
+                                                        max       =   3.50e+09
+Model F test:       Equal FMI                   F(  32,374025.5)  =       7.01
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------------------------
+                      stig_con | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+-------------------------------+----------------------------------------------------------------
+                         med_n |
+                     > median  |   6.924638   3.050051     2.27   0.023     -3.11455    16.96383
+                     unemp_quo |  -19.65888   17.76096    -1.11   0.268    -78.11932    38.80156
+                               |
+             med_n#c.unemp_quo |
+                     > median  |  -76.12939   33.56016    -2.27   0.023    -186.5952    34.33644
+                               |
+       c.unemp_quo#c.unemp_quo |   40.32808   41.52616     0.97   0.331    -96.32893    176.9851
+                               |
+ med_n#c.unemp_quo#c.unemp_quo |
+                     > median  |   174.4592   85.93005     2.03   0.042    -108.3725    457.2908
+                               |
+                      1.female |   1.063847   .6254761     1.70   0.089    -.9946027    3.122296
+                       child_3 |   .6327063   1.229918     0.51   0.607    -3.415381    4.680794
+                     child_4_9 |  -2.614465   1.033506    -2.53   0.011    -6.015842    .7869118
+                   child_10_17 |  -.9592685   .9081142    -1.06   0.291    -3.947815    2.029278
+                          care |   .8086388    1.06813     0.76   0.449    -2.706329    4.323606
+                         age_c |  -.0222939   .0308262    -0.72   0.470    -.1237534    .0791657
+                               |
+               c.age_c#c.age_c |  -.0036889    .002288    -1.61   0.107    -.0112191    .0038413
+                               |
+                 unemp_cur_n_c |   .2584385   .0786275     3.29   0.001    -.0003532    .5172302
+                               |
+                  unemp_ep_ord |
+                2 AL-Episoden  |   1.294418   .8875391     1.46   0.145    -1.628237    4.217074
+      3 oder mehr AL-Episoden  |   .6342212   1.159579     0.55   0.584    -3.182925    4.451367
+                               |
+                   depindug2_c |   .8640379   .0934819     9.24   0.000     .5563535    1.171722
+                 ln_oecdincn_c |   1.212465   .8267535     1.47   0.143    -1.509014    3.933945
+                        search |   1.818056   .6832919     2.66   0.008     -.431159    4.067271
+                               |
+                      leistbez |
+                  no benefits  |   .2639141   1.853546     0.14   0.887    -5.839932     6.36776
+                        ALGII  |   1.003584   1.218065     0.82   0.410    -3.006919    5.014088
+                               |
+                daily_wage_med |  -.0746566   .0457789    -1.63   0.103    -.2253182    .0760051
+                             n |  -.0000347    .001086    -0.03   0.974    -.0036089    .0035395
+                         urban |  -1.359216   .9087258    -1.50   0.135    -4.349907    1.631476
+              n_est_close_5yrs |  -.0015975    .022856    -0.07   0.944     -.076823    .0736281
+                           alq |  -.0776476   .1567369    -0.50   0.620    -.5934512    .4381561
+                     high_gini |    .521508   .8783731     0.59   0.553    -2.369498    3.412514
+                         moved |  -.0258857   1.061455    -0.02   0.981    -3.519091    3.467319
+                               |
+                     subhealth |
+               good/very good  |  -2.431462   .6939858    -3.50   0.000    -4.715753   -.1471704
+                               |
+                           mig |
+migration background 1st gen.  |   3.242446   .8507316     3.81   0.000     .4408845    6.044007
+migration background 2nd gen.  |  -.3869406   1.322158    -0.29   0.770    -4.738447    3.964566
+                               |
+                      educ_kat |
+                ISCED 3 und 4  |  -1.390556   .7471563    -1.86   0.063    -3.849578    1.068465
+                ISCED 5 und 6  |  -.6197164   1.034633    -0.60   0.549     -4.02527    2.785837
+                               |
+                         _cons |   45.51565   4.053143    11.23   0.000     32.17623    58.85507
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+               sd(unemp_quo) |   .0000469   .0123181             0           .
+     sd(unemp_quo#unemp_quo) |   .0000805   .0215331             0           .
+                   sd(_cons) |   2.003448   .7356063      .5977281    6.715098
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   4.070407   .8117289      2.110335    7.850987
+-----------------------------+------------------------------------------------
+                sd(Residual) |   11.88719   .3194646      10.87963    12.98807
+------------------------------------------------------------------------------
+r; t=202.67 22:11:25
+
+.         *margins plot
+.         mimrgns, dydx(unemp_quo) at(unemp_quo = (0 (0.1) 0.5)) by(med_n) cmdmargins
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,840
+                                                Average RVI       =     0.0632
+                                                Largest FMI       =     0.0839
+DF adjustment:   Large sample                   DF:     min       =   7,008.86
+                                                        avg       =  41,060.87
+Within VCE type: Delta-method                           max       = 189,837.84
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : unemp_quo
+over         : med_n
+
+1._at        : 0.med_n
+                   unemp_quo       =           0
+               1.med_n
+                   unemp_quo       =           0
+
+2._at        : 0.med_n
+                   unemp_quo       =          .1
+               1.med_n
+                   unemp_quo       =          .1
+
+3._at        : 0.med_n
+                   unemp_quo       =          .2
+               1.med_n
+                   unemp_quo       =          .2
+
+4._at        : 0.med_n
+                   unemp_quo       =          .3
+               1.med_n
+                   unemp_quo       =          .3
+
+5._at        : 0.med_n
+                   unemp_quo       =          .4
+               1.med_n
+                   unemp_quo       =          .4
+
+6._at        : 0.med_n
+                   unemp_quo       =          .5
+               1.med_n
+                   unemp_quo       =          .5
+
+------------------------------------------------------------------------------
+             |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   _at#med_n |
+ 1#< median  |  -19.65888   17.76096    -1.11   0.268      -54.474    15.15623
+ 1#> median  |  -95.78827   32.56205    -2.94   0.003    -159.6184    -31.9581
+ 2#< median  |  -11.59326   10.85658    -1.07   0.286    -32.87545    9.688918
+ 2#> median  |  -52.83081   18.46971    -2.86   0.004    -89.03603    -16.6256
+ 3#< median  |  -3.527648   7.631037    -0.46   0.644     -18.4853    11.43001
+ 3#> median  |  -9.873364   10.12807    -0.97   0.330     -29.7257     9.97897
+ 4#< median  |    4.53797   11.68563     0.39   0.698    -18.36559    27.44152
+ 4#> median  |   33.08409   18.56421     1.78   0.075    -3.305058    69.47324
+ 5#< median  |   12.60359   18.78374     0.67   0.502    -24.21221    49.41938
+ 5#> median  |   76.04154   32.66935     2.33   0.020      12.0026    140.0805
+ 6#< median  |    20.6692   26.59055     0.78   0.437     -31.4481     72.7865
+ 6#> median  |    118.999   47.65025     2.50   0.013     25.59361    212.4044
+------------------------------------------------------------------------------
+r; t=299.11 22:16:25
+
+.         marginsplot, x(unemp_quo) recast(line)   yline(0) title("A: Neighborhood size") ytitle("Average marginal effect
+> ")
+
+Variables that uniquely identify margins: unemp_quo med_n
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+r; t=1.43 22:16:26
+
+. 
+.         graph save "${out}\robustness\marginsplot_unempq2_NHsize.gph", replace  
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\marginsplot_unempq2_NHsize.gph saved
+r; t=0.16 22:16:26
+
+.         
+. 
+. 
+. 
+. global          model_ind1_new          i.female child_* care c.age_c##c.age_c c.unemp_cur_n_c i.unemp_ep_ord depindug2
+> _c ln_oecdincn_c search ib1.leistbez daily_wage_med n high_gini alq n_est_close_5yrs moved
+r; t=0.00 22:16:26
+
+. 
+. //individuals living in in urban or rural regions 
+. tab urban
+
+      urban |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      Rural |     45,645       48.64       48.64
+      Urban |     48,195       51.36      100.00
+------------+-----------------------------------
+      Total |     93,840      100.00
+r; t=0.00 22:16:26
+
+. 
+.         **triple interaction: squared UE and urban vs rural
+.         foreach level in 99.9 {
+  2.         cap drop        ind
+  3.         mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                                 mixed stig_con i.urban#c.unemp_quo##c.unemp_quo  $model_ind1_new  $control_ind  ///
+>                                 || kreisnr: c.unemp_quo##c.unemp_quo || $level:  ///
+>                                 , mle difficult covariance(unstructured)   
+  4.         est store       m_nhltunemp_urban
+  5.         }
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,840
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.7        135
+           geo_grid_c~l |      1,185          1        1.6         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.0704
+                                                Largest FMI       =     0.1615
+DF adjustment:   Large sample                   DF:     min       =   1,899.21
+                                                        avg       =   2.32e+08
+                                                        max       =   6.53e+09
+Model F test:       Equal FMI                   F(  30,349903.8)  =       7.34
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------------------------
+                      stig_con | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+-------------------------------+----------------------------------------------------------------
+             urban#c.unemp_quo |
+                        Urban  |  -8.538055   13.53792    -0.63   0.528    -53.09297    36.01686
+                               |
+                     unemp_quo |  -27.67221   16.88355    -1.64   0.101    -83.24873    27.90431
+                               |
+ urban#c.unemp_quo#c.unemp_quo |
+                        Rural  |   69.34602    39.0807     1.77   0.076    -59.27787    197.9699
+                        Urban  |   61.61543    53.1016     1.16   0.246    -113.1319    236.3628
+                               |
+                      1.female |   1.077858    .625969     1.72   0.085    -.9822111    3.137926
+                       child_3 |   .7793166   1.231707     0.63   0.527    -3.274668    4.833302
+                     child_4_9 |  -2.655729    1.03464    -2.57   0.010    -6.060844    .7493853
+                   child_10_17 |  -.9839945   .9085894    -1.08   0.279    -3.974111    2.006122
+                          care |   .6852915   1.069205     0.64   0.522    -2.833231    4.203814
+                         age_c |  -.0212878   .0308736    -0.69   0.491    -.1229035    .0803278
+                               |
+               c.age_c#c.age_c |  -.0037449   .0022893    -1.64   0.102    -.0112792    .0037894
+                               |
+                 unemp_cur_n_c |   .2546087   .0787432     3.23   0.001    -.0045686     .513786
+                               |
+                  unemp_ep_ord |
+                2 AL-Episoden  |    1.26259   .8881522     1.42   0.155    -1.662087    4.187266
+      3 oder mehr AL-Episoden  |   .5912503   1.161551     0.51   0.611    -3.232438    4.414939
+                               |
+                   depindug2_c |   .8723173   .0936025     9.32   0.000     .5642325    1.180402
+                 ln_oecdincn_c |   1.204877   .8264095     1.46   0.145    -1.515439    3.925192
+                        search |   1.860352    .683945     2.72   0.007    -.3910363     4.11174
+                               |
+                      leistbez |
+                  no benefits  |   .4678099   1.854086     0.25   0.801    -5.637968    6.573588
+                        ALGII  |   1.166381   1.217772     0.96   0.338    -2.843193    5.175955
+                               |
+                daily_wage_med |  -.0671069   .0442831    -1.52   0.130    -.2128596    .0786457
+                             n |   .0002095    .001027     0.20   0.838    -.0031707    .0035898
+                     high_gini |   .2086561   .8647116     0.24   0.809    -2.637318    3.054631
+                           alq |  -.0826594    .156988    -0.53   0.599    -.5992929    .4339741
+              n_est_close_5yrs |  -.0052345   .0222576    -0.24   0.814    -.0784913    .0680223
+                         moved |  -.0215455   1.061711    -0.02   0.984    -3.515588    3.472497
+                               |
+                     subhealth |
+               good/very good  |  -2.359856    .694194    -3.40   0.001    -4.644849   -.0748624
+                               |
+                           mig |
+migration background 1st gen.  |   3.267608   .8498802     3.84   0.000     .4688051    6.066411
+migration background 2nd gen.  |  -.2305974   1.321218    -0.17   0.861    -4.578957    4.117762
+                               |
+                      educ_kat |
+                ISCED 3 und 4  |  -1.361482   .7483001    -1.82   0.069    -3.824273     1.10131
+                ISCED 5 und 6  |   -.605447   1.036461    -0.58   0.559    -4.017026    2.806132
+                               |
+                         _cons |   45.16854   4.050544    11.15   0.000      31.8371    58.49999
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+               sd(unemp_quo) |   .0000283    .005385      3.5e-277    2.3e+267
+     sd(unemp_quo#unemp_quo) |   .0000322   .0091719             0           .
+                   sd(_cons) |   2.010059   .7304831      .6071517    6.654575
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   3.998279   .8394005      2.002334    7.983801
+-----------------------------+------------------------------------------------
+                sd(Residual) |   11.92133    .323013      10.90293    13.03484
+------------------------------------------------------------------------------
+r; t=198.95 22:19:45
+
+.         
+.         *margins plot
+.         mimrgns, dydx(unemp_quo) at(unemp_quo = (0 (0.1) 0.5)) by(urban) cmdmargins
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,840
+                                                Average RVI       =     0.0518
+                                                Largest FMI       =     0.0839
+DF adjustment:   Large sample                   DF:     min       =   6,996.69
+                                                        avg       =  27,986.21
+Within VCE type: Delta-method                           max       =  59,490.41
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : unemp_quo
+over         : urban
+
+1._at        : 0.urban
+                   unemp_quo       =           0
+               1.urban
+                   unemp_quo       =           0
+
+2._at        : 0.urban
+                   unemp_quo       =          .1
+               1.urban
+                   unemp_quo       =          .1
+
+3._at        : 0.urban
+                   unemp_quo       =          .2
+               1.urban
+                   unemp_quo       =          .2
+
+4._at        : 0.urban
+                   unemp_quo       =          .3
+               1.urban
+                   unemp_quo       =          .3
+
+5._at        : 0.urban
+                   unemp_quo       =          .4
+               1.urban
+                   unemp_quo       =          .4
+
+6._at        : 0.urban
+                   unemp_quo       =          .5
+               1.urban
+                   unemp_quo       =          .5
+
+------------------------------------------------------------------------------
+             |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   _at#urban |
+    1#Rural  |  -27.67221   16.88355    -1.64   0.101    -60.76841       5.424
+    1#Urban  |  -36.21026   18.89976    -1.92   0.055     -73.2562    .8356705
+    2#Rural  |    -13.803   10.44155    -1.32   0.186    -34.27161    6.665608
+    2#Urban  |  -23.88718   10.81975    -2.21   0.027    -45.09612   -2.678228
+    3#Rural  |    .066203   7.428453     0.01   0.993    -14.49446    14.62687
+    3#Urban  |  -11.56409   10.12499    -1.14   0.253    -31.40961    8.281425
+    4#Rural  |   13.93541   11.11404     1.25   0.210    -7.848414    35.71923
+    4#Urban  |   .7589967   17.70724     0.04   0.966    -33.94727    35.46526
+    5#Rural  |   27.80461   17.72134     1.57   0.117    -6.930073     62.5393
+    5#Urban  |   13.08208   27.38904     0.48   0.633    -40.60062    66.76478
+    6#Rural  |   41.67382   25.03506     1.66   0.096    -7.396599    90.74423
+    6#Urban  |   25.40517   37.58132     0.68   0.499    -48.25462    99.06495
+------------------------------------------------------------------------------
+r; t=278.83 22:24:24
+
+.         marginsplot, x(unemp_quo) recast(line)   yline(0) title("B: Urbanity") ytitle("Average marginal effect")
+
+Variables that uniquely identify margins: unemp_quo urban
+r; t=1.21 22:24:25
+
+. 
+.         graph save "${out}\robustness\marginsplot_unempq2_urban.gph", replace   
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\marginsplot_unempq2_urban.gph saved
+r; t=0.19 22:24:25
+
+.         
+. 
+. global          model_ind1_new          i.female child_* care c.age_c##c.age_c c.unemp_cur_n_c i.unemp_ep_ord depindug2
+> _c ln_oecdincn_c search ib1.leistbez ///
+>                                                                 daily_wage_med n urban  n_est_close_5yrs alq high_gini 
+> moved
+r; t=0.00 22:24:25
+
+. 
+. 
+. //living in rural east-german counties?
+. cap drop east
+r; t=0.00 22:24:25
+
+. gen east = (kr_id>10000 & kr_id<.)
+r; t=0.00 22:24:25
+
+. lab define east 0 "West" 1 "East", modify
+r; t=0.00 22:24:25
+
+. lab value east east
+r; t=0.00 22:24:25
+
+. 
+. 
+. **triple interaction: squared UE and east vs west
+.         foreach level in 99.9 {
+  2.         cap drop        ind
+  3.         mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                                 mixed stig_con i.east##c.unemp_quo##c.unemp_quo $model_ind1_new  $control_ind ///
+>                                 || kreisnr: c.unemp_quo##c.unemp_quo || $level:  ///
+>                                 , mle difficult  covariance(unstructured) 
+  4.         est store       m_nhltunemp_east
+  5.         }
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,840
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.7        135
+           geo_grid_c~l |      1,185          1        1.6         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.2077
+                                                Largest FMI       =     0.8417
+DF adjustment:   Large sample                   DF:     min       =      69.90
+                                                        avg       =   2.33e+08
+                                                        max       =   4.50e+09
+Model F test:       Equal FMI                   F(  32,393656.6)  =       7.07
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------------------------
+                      stig_con | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+-------------------------------+----------------------------------------------------------------
+                          east |
+                         East  |   .0457726   2.638274     0.02   0.986    -8.636565     8.72811
+                     unemp_quo |  -55.55626   28.00609    -1.98   0.047    -147.7245    36.61193
+                               |
+              east#c.unemp_quo |
+                         East  |   32.74637   31.47802     1.04   0.298    -70.84045    136.3332
+                               |
+       c.unemp_quo#c.unemp_quo |   141.7786   84.73718     1.67   0.094    -137.0724    420.6296
+                               |
+  east#c.unemp_quo#c.unemp_quo |
+                         East  |  -95.89988    93.5938    -1.02   0.306    -403.8879    212.0881
+                               |
+                      1.female |   1.024679    .626654     1.64   0.102    -1.037652    3.087011
+                       child_3 |   .5662679    1.23464     0.46   0.646    -3.497466    4.630002
+                     child_4_9 |  -2.683877   1.034219    -2.60   0.009    -6.087582    .7198271
+                   child_10_17 |  -.9865138   .9082578    -1.09   0.277    -3.975545    2.002517
+                          care |   .6105016    1.07342     0.57   0.570    -2.921883    4.142886
+                         age_c |  -.0226676    .030892    -0.73   0.463    -.1243446    .0790094
+                               |
+               c.age_c#c.age_c |  -.0037008   .0022885    -1.62   0.106    -.0112326     .003831
+                               |
+                 unemp_cur_n_c |    .247771    .078791     3.14   0.002    -.0115598    .5071019
+                               |
+                  unemp_ep_ord |
+                2 AL-Episoden  |   1.225403    .886656     1.38   0.167    -1.694229    4.145035
+      3 oder mehr AL-Episoden  |   .4399832   1.161121     0.38   0.705    -3.382196    4.262163
+                               |
+                   depindug2_c |    .869021   .0935051     9.29   0.000     .5612561    1.176786
+                 ln_oecdincn_c |    1.29229   .8258385     1.56   0.118     -1.42613    4.010711
+                        search |   1.763124   .6850062     2.57   0.010    -.4917402    4.017987
+                               |
+                      leistbez |
+                  no benefits  |   .6372831   1.854337     0.34   0.731    -5.469296    6.743862
+                        ALGII  |   1.259024    1.21569     1.04   0.300    -2.743586    5.261634
+                               |
+                daily_wage_med |  -.0389512   .0463238    -0.84   0.400    -.1914246    .1135222
+                             n |   .0003733   .0010189     0.37   0.714    -.0029804    .0037271
+                         urban |  -.7347363   .9163478    -0.80   0.423     -3.75048    2.281008
+              n_est_close_5yrs |  -.0092528   .0219265    -0.42   0.673    -.0814206    .0629149
+                           alq |  -.2162176   .1664868    -1.30   0.194    -.7640917    .3316565
+                     high_gini |   .7509652   .8929921     0.84   0.400    -2.188168    3.690099
+                         moved |  -.1006042    1.06256    -0.09   0.925    -3.597437    3.396229
+                               |
+                     subhealth |
+               good/very good  |  -2.427511   .6944484    -3.50   0.000    -4.713317   -.1417054
+                               |
+                           mig |
+migration background 1st gen.  |   3.424674   .8532816     4.01   0.000     .6147194    6.234628
+migration background 2nd gen.  |  -.2109817   1.322224    -0.16   0.873    -4.562685    4.140722
+                               |
+                      educ_kat |
+                ISCED 3 und 4  |  -1.487023   .7510481    -1.98   0.048     -3.95888    .9848354
+                ISCED 5 und 6  |  -.7341842   1.036564    -0.71   0.479    -4.146071    2.677703
+                               |
+                         _cons |   45.23776   4.343922    10.41   0.000     30.94092    59.53461
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+               sd(unemp_quo) |   .0000307    .008705             0           .
+     sd(unemp_quo#unemp_quo) |   .0000376   .0111789             0           .
+                   sd(_cons) |   1.276681   2.755749      .0007687     2120.28
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   4.039678   .8298875      2.053366    7.947438
+-----------------------------+------------------------------------------------
+                sd(Residual) |   11.92696   .3239954       10.9055    13.04409
+------------------------------------------------------------------------------
+r; t=202.20 22:27:48
+
+.         
+.         *margins plot
+.         mimrgns, dydx(unemp_quo) at(unemp_quo = (0 (0.1) 0.5)) by(east) cmdmargins
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,840
+                                                Average RVI       =     0.0485
+                                                Largest FMI       =     0.0692
+DF adjustment:   Large sample                   DF:     min       =  10,277.06
+                                                        avg       =  39,613.64
+Within VCE type: Delta-method                           max       =  94,309.31
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : unemp_quo
+over         : east
+
+1._at        : 0.east
+                   unemp_quo       =           0
+               1.east
+                   unemp_quo       =           0
+
+2._at        : 0.east
+                   unemp_quo       =          .1
+               1.east
+                   unemp_quo       =          .1
+
+3._at        : 0.east
+                   unemp_quo       =          .2
+               1.east
+                   unemp_quo       =          .2
+
+4._at        : 0.east
+                   unemp_quo       =          .3
+               1.east
+                   unemp_quo       =          .3
+
+5._at        : 0.east
+                   unemp_quo       =          .4
+               1.east
+                   unemp_quo       =          .4
+
+6._at        : 0.east
+                   unemp_quo       =          .5
+               1.east
+                   unemp_quo       =          .5
+
+------------------------------------------------------------------------------
+             |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    _at#east |
+     1#West  |  -55.55626   28.00609    -1.98   0.047    -110.4505   -.6620632
+     1#East  |  -22.80989   19.67425    -1.16   0.246    -61.37421    15.75443
+     2#West  |  -27.20055   13.56754    -2.00   0.045    -53.79539   -.6057066
+     2#East  |  -13.63415   12.08372    -1.13   0.259    -37.32059    10.05229
+     3#West  |   1.155168    12.5796     0.09   0.927    -23.50142    25.81175
+     3#East  |  -4.458409   7.482665    -0.60   0.551     -19.1253    10.20849
+     4#West  |   29.51089   26.58657     1.11   0.267    -22.59896    81.62074
+     4#East  |   4.717332   10.81657     0.44   0.663    -16.48303    25.91769
+     5#West  |    57.8666   42.77705     1.35   0.176     -25.9768      141.71
+     5#East  |   13.89307   18.13946     0.77   0.444    -21.66022    49.44637
+     6#West  |   86.22231   59.39139     1.45   0.147    -30.18552    202.6301
+     6#East  |   23.06881   26.30809     0.88   0.381    -28.49528    74.63291
+------------------------------------------------------------------------------
+r; t=303.08 22:32:51
+
+.         marginsplot, x(unemp_quo) recast(line)   yline(0) title("C: Region: East or West") ytitle("Average marginal eff
+> ect")
+
+Variables that uniquely identify margins: unemp_quo east
+r; t=1.22 22:32:52
+
+. 
+.         graph save "${out}\robustness\marginsplot_unempq2_east.gph", replace    
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\marginsplot_unempq2_east.gph saved
+r; t=0.17 22:32:52
+
+.         
+. global          model_ind1_new          i.female child_* care c.age_c##c.age_c c.unemp_cur_n_c i.unemp_ep_ord depindug2
+> _c ln_oecdincn_c search ib1.leistbez ///
+>                                                                 daily_wage_med n urban  n_est_close_5yrs alq high_gini 
+> east
+r; t=0.00 22:32:52
+
+. 
+. //movers vs stayers
+. *Total
+. foreach level in 99.9 {
+  2. cap drop        ind
+  3. mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                         mixed stig_con i.moved##c.unemp_quo##c.unemp_quo $model_ind1_new  ///
+>                         $control_ind || kreisnr: c.unemp_quo##c.unemp_quo || $level: ///
+>                         , mle difficult  covariance(unstructured) 
+  4. est store       r_nhltunemp_moved
+  5. }
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,840
+
+        Grouping information
+        -------------------------------------------------------------
+                        |     No. of       Observations per group
+         Group variable |     groups    Minimum    Average    Maximum
+        ----------------+--------------------------------------------
+                kreisnr |        134          5       13.7        135
+           geo_grid_c~l |      1,185          1        1.6         13
+        -------------------------------------------------------------
+
+                                                Average RVI       =     0.1275
+                                                Largest FMI       =     0.6997
+DF adjustment:   Large sample                   DF:     min       =     101.76
+                                                        avg       =   4.11e+07
+                                                        max       =   9.31e+08
+Model F test:       Equal FMI                   F(  32,400035.5)  =       7.07
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------------------------
+                      stig_con | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+-------------------------------+----------------------------------------------------------------
+                         moved |
+                        Mover  |  -1.423397   3.798636    -0.37   0.708     -13.9234     11.0766
+                     unemp_quo |  -33.34061   16.64923    -2.00   0.045    -88.14275    21.46154
+                               |
+             moved#c.unemp_quo |
+                        Mover  |   29.81115    49.3854     0.60   0.546    -132.7041    192.3264
+                               |
+       c.unemp_quo#c.unemp_quo |   73.46305   37.30488     1.97   0.049    -49.30797    196.2341
+                               |
+ moved#c.unemp_quo#c.unemp_quo |
+                        Mover  |  -105.1818   139.1935    -0.76   0.450    -563.2294    352.8657
+                               |
+                      1.female |   1.012521   .6266196     1.62   0.106    -1.049691    3.074733
+                       child_3 |   .6342501   1.233724     0.51   0.607    -3.426453    4.694954
+                     child_4_9 |  -2.677304    1.03345    -2.59   0.010    -6.078487    .7238786
+                   child_10_17 |  -.9760166   .9095934    -1.07   0.283    -3.969455    2.017422
+                          care |   .6361516   1.071093     0.59   0.553    -2.888596    4.160899
+                         age_c |  -.0209965   .0308582    -0.68   0.496    -.1225621    .0805692
+                               |
+               c.age_c#c.age_c |  -.0035776   .0022894    -1.56   0.118    -.0111125    .0039572
+                               |
+                 unemp_cur_n_c |   .2460353   .0788259     3.12   0.002    -.0134117    .5054823
+                               |
+                  unemp_ep_ord |
+                2 AL-Episoden  |   1.204173   .8866347     1.36   0.174     -1.71539    4.123735
+      3 oder mehr AL-Episoden  |   .4793575   1.160088     0.41   0.679    -3.339406    4.298121
+                               |
+                   depindug2_c |   .8701585   .0935293     9.30   0.000     .5623132    1.178004
+                 ln_oecdincn_c |   1.268568   .8255438     1.54   0.124    -1.448887    3.986023
+                        search |   1.748522   .6850409     2.55   0.011    -.5064711    4.003516
+                               |
+                      leistbez |
+                  no benefits  |   .6020628   1.854632     0.32   0.745    -5.505457    6.709583
+                        ALGII  |   1.259357   1.218325     1.03   0.301    -2.752073    5.270787
+                               |
+                daily_wage_med |  -.0356153   .0449873    -0.79   0.429    -.1836825    .1124518
+                             n |   .0003022   .0010146     0.30   0.766    -.0030371    .0036415
+                         urban |  -.7293328   .9147998    -0.80   0.425    -3.739971    2.281306
+              n_est_close_5yrs |  -.0082054   .0218754    -0.38   0.708    -.0802053    .0637945
+                           alq |  -.2234135   .1651177    -1.35   0.176    -.7667892    .3199622
+                     high_gini |    .712865   .8908465     0.80   0.424    -2.219186    3.644916
+                          east |   2.296319   1.020278     2.25   0.024    -1.061098    5.653736
+                               |
+                     subhealth |
+               good/very good  |  -2.418804   .6942116    -3.48   0.000     -4.70381    -.133798
+                               |
+                           mig |
+migration background 1st gen.  |   3.414076   .8526593     4.00   0.000     .6062153    6.221937
+migration background 2nd gen.  |  -.1413536   1.324811    -0.11   0.915    -4.501578    4.218871
+                               |
+                      educ_kat |
+                ISCED 3 und 4  |  -1.460824    .750721    -1.95   0.052    -3.931614    1.009966
+                ISCED 5 und 6  |  -.7021517   1.035995    -0.68   0.498    -4.112168    2.707864
+                               |
+                         _cons |   43.66254   4.020169    10.86   0.000     30.43117    56.89391
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Independent         |
+               sd(unemp_quo) |   .0000319   .0052716      2.6e-241    3.8e+231
+     sd(unemp_quo#unemp_quo) |   .0000246   .0050954      9.1e-302    6.6e+291
+                   sd(_cons) |   1.436758   1.994423      .0130154    158.6023
+-----------------------------+------------------------------------------------
+geo_grid_c~l: Identity       |
+                   sd(_cons) |   4.016801   .8393718      2.018064    7.995133
+-----------------------------+------------------------------------------------
+                sd(Residual) |   11.93438   .3253403       10.9088    13.05637
+------------------------------------------------------------------------------
+r; t=206.64 22:36:19
+
+. 
+. mimrgns, dydx(unemp_quo) at(unemp_quo = (0 (0.1) 0.5)) by(moved)   cmdmargins
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,840
+                                                Average RVI       =     0.0436
+                                                Largest FMI       =     0.0811
+DF adjustment:   Large sample                   DF:     min       =   7,490.97
+                                                        avg       =  38,958.58
+Within VCE type: Delta-method                           max       =  75,737.65
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : unemp_quo
+over         : moved
+
+1._at        : 0.moved
+                   unemp_quo       =           0
+               1.moved
+                   unemp_quo       =           0
+
+2._at        : 0.moved
+                   unemp_quo       =          .1
+               1.moved
+                   unemp_quo       =          .1
+
+3._at        : 0.moved
+                   unemp_quo       =          .2
+               1.moved
+                   unemp_quo       =          .2
+
+4._at        : 0.moved
+                   unemp_quo       =          .3
+               1.moved
+                   unemp_quo       =          .3
+
+5._at        : 0.moved
+                   unemp_quo       =          .4
+               1.moved
+                   unemp_quo       =          .4
+
+6._at        : 0.moved
+                   unemp_quo       =          .5
+               1.moved
+                   unemp_quo       =          .5
+
+------------------------------------------------------------------------------
+             |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   _at#moved |
+   1#Stayer  |  -33.34061   16.64923    -2.00   0.045    -65.97674    -.704469
+    1#Mover  |  -3.529456   48.84349    -0.07   0.942    -99.26459    92.20568
+   2#Stayer  |    -18.648   10.40389    -1.79   0.073    -39.04253    1.746542
+    2#Mover  |  -9.873215    23.8625    -0.41   0.679    -56.64501    36.89858
+   3#Stayer  |  -3.955385    7.11457    -0.56   0.578    -17.90085    9.990075
+    3#Mover  |  -16.21697   15.48252    -1.05   0.295    -46.56283    14.12889
+   4#Stayer  |   10.73723     10.214     1.05   0.293    -9.282156    30.75661
+    4#Mover  |  -22.56073   37.37051    -0.60   0.546     -95.8072    50.68574
+   5#Stayer  |   25.42984   16.41239     1.55   0.121    -6.738545    57.59822
+    5#Mover  |  -28.90449   63.56067    -0.45   0.649    -153.4842    95.67522
+   6#Stayer  |   40.12245   23.36107     1.72   0.086    -5.665747    85.91064
+    6#Mover  |  -35.24825   90.38761    -0.39   0.697    -212.4093    141.9128
+------------------------------------------------------------------------------
+r; t=288.49 22:41:07
+
+. marginsplot, x(unemp_quo) recast(line)   yline(0) title("D: Relocation in previous year") ytitle("Average marginal effe
+> ct")
+
+Variables that uniquely identify margins: unemp_quo moved
+r; t=1.19 22:41:08
+
+. 
+.          
+. graph save "${out}\robustness\R_moved_marginsplot_unempq2", replace     
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\R_moved_marginsplot_unempq2.gph saved
+r; t=0.16 22:41:09
+
+. 
+. 
+. //combine all
+. graph combine  "${out}\robustness\marginsplot_unempq2_NHsize" ///
+>                                 "${out}\robustness\marginsplot_unempq2_urban" ///
+>                                 "${out}\robustness\marginsplot_unempq2_east" ///
+>                                 "${out}\robustness\R_moved_marginsplot_unempq2"  ///
+>                                         , ycommon col(2)   
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style sky not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style turquoise not found in class color, default attributes used)
+(note:  named style reddish not found in class color, default attributes used)
+r; t=3.70 22:41:12
+
+. 
+. graph export "${out}\R_marginsplot_subgroups_unemp.pdf", replace as(pdf)
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\R_marginsplot_subgroups_unemp.pdf saved as PDF format
+r; t=0.07 22:41:12
+
+.                 
+. ********************************************************************************
+. **# on county level
+. lab var alq "County unemployment quota"
+r; t=0.00 22:41:12
+
+. sum alq, d
+
+                  County unemployment quota
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     3.298038       2.939775
+ 5%     3.973597       2.939775
+10%     5.090706       2.939775       Obs              93,840
+25%     6.947896       2.939775       Sum of wgt.      93,840
+
+50%     8.604441                      Mean           8.631734
+                        Largest       Std. dev.      2.621355
+75%     11.12144       14.96311
+90%     11.93417       14.96311       Variance       6.871502
+95%     12.51648       14.96311       Skewness      -.0852856
+99%     14.33475       14.96311       Kurtosis       2.279039
+r; t=0.05 22:41:12
+
+. foreach level in 99.9 {
+  2.         cap drop        ind
+  3.         mi estimate     , dots saving(miest_nh_total, replace) post esample(ind) errorok level(`level'): ///
+>                                 mixed stig_con c.alq##c.alq $model_ind1_new  || kreisnr: ///
+>                                 , mle difficult  covariance(unstructured) 
+  4.         est store       m_alq
+  5.         }
+
+Imputations (50):
+  .........10.........20.........30.........40.........50 done
+
+Multiple-imputation estimates                   Imputations       =         50
+Mixed-effects ML regression                     Number of obs     =      1,840
+
+Group variable: kreisnr                         Number of groups  =        134
+                                                Obs per group:
+                                                              min =          5
+                                                              avg =       13.7
+                                                              max =        135
+                                                Average RVI       =     0.0707
+                                                Largest FMI       =     0.1556
+DF adjustment:   Large sample                   DF:     min       =   2,045.50
+                                                        avg       =  14,408.41
+                                                        max       =  49,008.61
+Model F test:       Equal FMI                   F(  23,284540.2)  =       8.22
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------------------
+                stig_con | Coefficient  Std. err.      t    P>|t|   [99.9% conf. interval]
+-------------------------+----------------------------------------------------------------
+                     alq |  -1.989853   .8242109    -2.41   0.016    -4.702537     .722831
+                         |
+             c.alq#c.alq |   .0966921   .0466299     2.07   0.038    -.0567689    .2501532
+                         |
+                1.female |   1.216871   .6338022     1.92   0.055    -.8689575    3.302699
+                 child_3 |   .8077348   1.232564     0.66   0.512    -3.249181     4.86465
+               child_4_9 |  -2.402825   1.035959    -2.32   0.020    -5.812221     1.00657
+             child_10_17 |  -.9445969   .9079205    -1.04   0.298    -3.932547    2.043353
+                    care |   .6205957   1.079543     0.57   0.565    -2.931883    4.173074
+                   age_c |  -.0028724   .0300679    -0.10   0.924    -.1018354    .0960906
+                         |
+         c.age_c#c.age_c |  -.0033604   .0023122    -1.45   0.146      -.01097    .0042493
+                         |
+           unemp_cur_n_c |   .2459268   .0792742     3.10   0.002    -.0149913    .5068449
+                         |
+            unemp_ep_ord |
+          2 AL-Episoden  |   1.013806   .8942405     1.13   0.257    -1.930703    3.958316
+3 oder mehr AL-Episoden  |   .2502621   1.169998     0.21   0.831    -3.601152    4.101676
+                         |
+             depindug2_c |   .9127194    .093973     9.71   0.000     .6034032    1.222036
+           ln_oecdincn_c |   1.127245   .8267242     1.36   0.173    -1.594035    3.848526
+                  search |   1.730862   .6900905     2.51   0.012    -.5406391    4.002363
+                         |
+                leistbez |
+            no benefits  |   .6493006   1.863028     0.35   0.727    -5.485716    6.784317
+                  ALGII  |   1.422781   1.218698     1.17   0.243    -2.589422    5.434984
+                         |
+          daily_wage_med |  -.0183968   .0370769    -0.50   0.620    -.1404281    .1036344
+                       n |   .0002755   .0009642     0.29   0.775    -.0028985    .0034496
+                   urban |  -.3158145   .9117074    -0.35   0.729    -3.316249     2.68462
+        n_est_close_5yrs |  -.0077657   .0208923    -0.37   0.710    -.0765413    .0610098
+                     alq |          0  (omitted)
+               high_gini |   .4422296   .7593981     0.58   0.560     -2.05708     2.94154
+                    east |   1.966078   1.013499     1.94   0.052    -1.369077    5.301233
+                   _cons |   45.84744   4.460377    10.28   0.000     31.16671    60.52816
+------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects parameters  |   Estimate   Std. err.   [99.9% conf. interval]
+-----------------------------+------------------------------------------------
+kreisnr: Identity            |
+                   sd(_cons) |     1.9278   .7441596       .540289    6.878567
+-----------------------------+------------------------------------------------
+                sd(Residual) |   12.68694    .227441      11.95995    13.45812
+------------------------------------------------------------------------------
+r; t=32.91 22:41:45
+
+.         
+.         *margins plot
+.         mimrgns, dydx(alq) at(alq = (2 (2) 20))  cmdmargins
+note: option predict() not specified; predict(xb) assumed
+
+Multiple-imputation estimates                   Imputations       =         50
+Average marginal effects                        Number of obs     =      1,840
+                                                Average RVI       =     0.0437
+                                                Largest FMI       =     0.0693
+DF adjustment:   Large sample                   DF:     min       =  10,271.13
+                                                        avg       =  53,752.19
+Within VCE type: Delta-method                           max       = 279,210.39
+
+Expression   : Linear prediction, fixed portion, predict(xb)
+dy/dx w.r.t. : alq
+
+1._at        : alq             =           2
+
+2._at        : alq             =           4
+
+3._at        : alq             =           6
+
+4._at        : alq             =           8
+
+5._at        : alq             =          10
+
+6._at        : alq             =          12
+
+7._at        : alq             =          14
+
+8._at        : alq             =          16
+
+9._at        : alq             =          18
+
+10._at       : alq             =          20
+
+------------------------------------------------------------------------------
+             |      dy/dx   Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |  -1.603085   .6422595    -2.50   0.013    -2.862012   -.3441576
+          2  |  -1.216316   .4639504    -2.62   0.009    -2.125739   -.3068932
+          3  |  -.8295476    .295942    -2.80   0.005    -1.409652   -.2494435
+          4  |   -.442779   .1717338    -2.58   0.010     -.779393   -.1061651
+          5  |  -.0560105    .202441    -0.28   0.782    -.4527892    .3407682
+          6  |    .330758   .3493584     0.95   0.344    -.3539829    1.015499
+          7  |   .7175266   .5222061     1.37   0.169    -.3060079    1.741061
+          8  |   1.104295   .7020871     1.57   0.116    -.2718207    2.480411
+          9  |   1.491064   .8847217     1.69   0.092    -.2430315    3.225159
+         10  |   1.877832   1.068699     1.76   0.079    -.2168748    3.972539
+------------------------------------------------------------------------------
+r; t=63.96 22:42:49
+
+.         marginsplot, x(alq) recast(line)   yline(0) title("County-level analysis") ///
+>                         ylabel(,labsize(vlarge)) ytitle("Average marginal effect",size(large)) ///
+>                         xlabel(,labsize(vlarge)) xtitle(,size(large))
+
+Variables that uniquely identify margins: alq
+r; t=1.19 22:42:50
+
+.         
+. graph save "${out}\R_marginsplot_unempq2_krs",  replace         
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\R_marginsplot_unempq2_krs.gph saved
+r; t=0.14 22:42:51
+
+. graph export "${out}\robustness\R_marginsplot_unempq2_krs.pdf", as(pdf) replace 
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\robustness\R_marginsplot_unempq2_krs.pdf saved as PDF
+    format
+r; t=0.07 22:42:51
+
+. 
+. 
+. 
+. log close
+      name:  <unnamed>
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\11_robustness.log
+  log type:  text
+ closed on:  22 Sep 2026, 22:42:51
+-------------------------------------------------------------------------------------------------------------------------

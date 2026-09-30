@@ -1,0 +1,208 @@
+-------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\09_check_selectivity.log
+  log type:  text
+ opened on:  22 Sep 2026, 10:55:13
+r; t=0.11 10:55:13
+
+. 
+. *Datensatz laden
+. use     "$data\DM_comp.dta", clear
+(PASS V1, 2006-2022, 16 Nov 2023, PENDDAT)
+r; t=0.22 10:55:13
+
+. **************
+. 
+. //flag missings
+. gen mis_stig = (stig_con>=.)
+r; t=0.00 10:55:13
+
+. tab mis_stig, m
+
+   mis_stig |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,731       94.08       94.08
+          1 |        109        5.92      100.00
+------------+-----------------------------------
+      Total |      1,840      100.00
+r; t=0.00 10:55:13
+
+. 
+. regress mis_stig unemp_quo ///
+>                                 i.female child_* care c.age_c##c.age_c c.unemp_cur_n_c ///
+>                                 i.unemp_ep_ord depindug2_c ln_oecdincn_c search ib1.leistbez ///
+>                                 daily_wage_med n urban  n_est_close_5yrs alq  moved ///
+>                                 i.subhealth i.mig i.educ_kat 
+
+      Source |       SS           df       MS      Number of obs   =     1,643
+-------------+----------------------------------   F(27, 1615)     =      2.00
+       Model |   2.4917599        27  .092287404   Prob > F        =    0.0017
+    Residual |  74.5149352     1,615  .046139279   R-squared       =    0.0324
+-------------+----------------------------------   Adj R-squared   =    0.0162
+       Total |  77.0066951     1,642  .046898109   Root MSE        =     .2148
+
+------------------------------------------------------------------------------------------------
+                      mis_stig | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------------------------+----------------------------------------------------------------
+                     unemp_quo |   .0268878   .1022381     0.26   0.793    -.1736454    .2274211
+                      1.female |   .0031936   .0109992     0.29   0.772    -.0183807    .0247678
+                       child_3 |  -.0192876   .0212737    -0.91   0.365    -.0610145    .0224393
+                     child_4_9 |  -.0198204    .017786    -1.11   0.265    -.0547065    .0150658
+                   child_10_17 |   .0177445   .0157147     1.13   0.259    -.0130789    .0485678
+                          care |  -.0142861   .0190681    -0.75   0.454    -.0516869    .0231147
+                         age_c |   .0003948   .0005417     0.73   0.466    -.0006677    .0014574
+                               |
+               c.age_c#c.age_c |   2.70e-06   .0000402     0.07   0.946    -.0000761    .0000815
+                               |
+                 unemp_cur_n_c |   -.002554   .0014093    -1.81   0.070    -.0053182    .0002102
+                               |
+                  unemp_ep_ord |
+                2 AL-Episoden  |  -.0105707    .015141    -0.70   0.485    -.0402688    .0191274
+      3 oder mehr AL-Episoden  |  -.0366523   .0201103    -1.82   0.069    -.0760973    .0027927
+                               |
+                   depindug2_c |   .0018004   .0016145     1.12   0.265    -.0013664    .0049671
+                 ln_oecdincn_c |   .0052959   .0144121     0.37   0.713    -.0229726    .0335643
+                        search |   .0107943    .011811     0.91   0.361    -.0123722    .0339609
+                               |
+                      leistbez |
+                  no benefits  |   .0361122   .0310814     1.16   0.245    -.0248518    .0970762
+                        ALGII  |   .0297367   .0206996     1.44   0.151    -.0108642    .0703376
+                               |
+                daily_wage_med |   .0003348    .000693     0.48   0.629    -.0010246    .0016942
+                             n |   5.34e-07   .0000158     0.03   0.973    -.0000305    .0000316
+                         urban |  -.0123749   .0129656    -0.95   0.340    -.0378062    .0130563
+              n_est_close_5yrs |   .0000421   .0003385     0.12   0.901    -.0006218     .000706
+                           alq |  -.0020512   .0022576    -0.91   0.364    -.0064793    .0023768
+                         moved |   .0065679   .0187506     0.35   0.726    -.0302102     .043346
+                               |
+                     subhealth |
+               good/very good  |   .0036688   .0120453     0.30   0.761    -.0199573    .0272949
+                               |
+                           mig |
+migration background 1st gen.  |   .0734647   .0142669     5.15   0.000     .0454812    .1014482
+migration background 2nd gen.  |  -.0009615   .0228922    -0.04   0.967     -.045863    .0439401
+                               |
+                      educ_kat |
+                ISCED 3 und 4  |   .0058376   .0131594     0.44   0.657    -.0199738     .031649
+                ISCED 5 und 6  |   .0027656   .0177168     0.16   0.876    -.0319848     .037516
+                               |
+                         _cons |  -.0037309   .0601072    -0.06   0.951    -.1216272    .1141654
+------------------------------------------------------------------------------------------------
+r; t=4.22 10:55:17
+
+. est sto m_bias
+r; t=0.02 10:55:17
+
+. 
+. 
+. //label 
+. lab var  unemp_quo "Share of unemployed" 
+r; t=0.00 10:55:17
+
+. lab var female "Female, ref. male"
+r; t=0.00 10:55:17
+
+. lab define female 0 "Male" 1 "Female"
+r; t=0.00 10:55:17
+
+. lab value female female
+r; t=0.00 10:55:17
+
+. 
+. lab var child_3 "Children below 3"
+r; t=0.00 10:55:17
+
+. lab var child_4_9 "Children between 4 & 9"
+r; t=0.00 10:55:17
+
+. lab var child_10_17 "Children between 10 & 17"
+r; t=0.00 10:55:17
+
+. lab var unemp_cur_n_c "Unemployment duration"
+r; t=0.00 10:55:17
+
+. lab define unemp_ep_ord 0 "1 unemployment episode" 1 "2 unemployment episodes" 2 "3+ unemployment episodes"
+r; t=0.00 10:55:17
+
+. lab value unemp_ep_ord unemp_ep_ord
+r; t=0.00 10:55:17
+
+. 
+. lab var age_c "Age"
+r; t=0.00 10:55:17
+
+. lab var care "Care responsibility"
+r; t=0.00 10:55:17
+
+. lab var mig "Migration background, ref. native German"
+r; t=0.00 10:55:17
+
+. lab var stig_con "Stigma consciousness"
+r; t=0.00 10:55:17
+
+. lab var subhealth "Poor subjective health"
+r; t=0.00 10:55:17
+
+. lab define health 0 "Poor health" 1 "(Very good) health"
+r; t=0.00 10:55:17
+
+. lab value subhealth health 
+r; t=0.00 10:55:17
+
+. lab define educ_kat 1 "ISCED 1 & 2" 2 "ISCED 3 & 4" 3 "ISCED 5 & 6", modify
+r; t=0.00 10:55:17
+
+. lab value educ_kat educ_kat
+r; t=0.00 10:55:17
+
+. 
+. lab var depindug2_c "Centered household income" 
+r; t=0.00 10:55:17
+
+. lab var ln_oecdincn_c "Log. household income" 
+r; t=0.00 10:55:17
+
+. lab var search "Job search obligation" 
+r; t=0.00 10:55:17
+
+. lab define leistbez 0 "Receives no benefits" 1 "Receives short-term benefits (UB1)" ///
+>         2 "Receives UBII"
+r; t=0.00 10:55:17
+
+. lab value leistbez leistbez
+r; t=0.00 10:55:17
+
+.         
+. 
+. lab var n_est_close_5yrs "Firm closures in neighbourhood, last 5 years"
+r; t=0.00 10:55:17
+
+. lab var urban "Lives in urban county"
+r; t=0.00 10:55:17
+
+. lab var leistbez "Benefit receipt" 
+r; t=0.00 10:55:17
+
+. lab var daily_wage_med "Neighborhood mean wage"
+r; t=0.00 10:55:17
+
+. lab var n "Number of neighborhood residents"
+r; t=0.00 10:55:17
+
+. 
+. coefplot m_bias, xline(0) label ///
+>         drop(_cons)  xtitle("Missing in stigma consciousness")
+(note:  named style reddish not found in class color, default attributes used)
+r; t=0.92 10:55:18
+
+. graph export "${out}\Missing_selectivity.pdf", replace as(pdf)
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\out\Missing_selectivity.pdf saved as PDF format
+r; t=0.11 10:55:18
+
+. 
+. log close       
+      name:  <unnamed>
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\09_check_selectivity.log
+  log type:  text
+ closed on:  22 Sep 2026, 10:55:18
+-------------------------------------------------------------------------------------------------------------------------

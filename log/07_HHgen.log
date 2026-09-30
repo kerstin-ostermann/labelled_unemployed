@@ -1,0 +1,145 @@
+-------------------------------------------------------------------------------------------------------------------------
+      name:  log_HHgen
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\07_HHgen.log
+  log type:  text
+ opened on:  22 Sep 2026, 10:50:09
+r; t=0.08 10:50:09
+
+. 
+. use "$orig_bef\PENDDAT.dta", clear
+(PASS V1, 2006-2022, 16 Nov 2023, PENDDAT)
+r; t=9.81 10:50:19
+
+. *************
+. 
+. **How many household members are employed?
+. tab             statakt
+
+   Aktueller Hauptstatus, generiert (ab |
+                               Welle 2) |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+Item fuer Fragebogenversion nicht relev |     25,221       11.96       11.96
+            Item in Welle nicht erhoben |     18,954        8.99       20.95
+Generierung nicht mgl. (fehlende Werte) |      1,999        0.95       21.90
+Erwerbstaetig m. Eink. > 400/450 Euro/M |     76,654       36.35       58.24
+                    Arbeitslos gemeldet |     41,565       19.71       77.95
+Schueler (bis W3 in Spells n. kat. erh. |      9,419        4.47       82.42
+               Ausbildung/Lehre/Studium |     11,200        5.31       87.73
+                 Wehr-/Zivildienst/etc. |        362        0.17       87.90
+                      Hausfrau/Hausmann |      8,793        4.17       92.07
+  Mutterschutz/Erzieh.urlaub/Elternzeit |      2,491        1.18       93.25
+        Rentner/Pensionaer/Vorruhestand |     10,794        5.12       98.37
+           Sonstiges/Hauptstatus unklar |      1,367        0.65       99.02
+Arb.los, n. gemeldet (ab W4 aus off. A. |        466        0.22       99.24
+Krank/beruf.unf./erw.unf./beh.(off. A.) |      1,260        0.60       99.84
+  Selbst./mithelf. Fam.angeh. (off. A.) |        338        0.16      100.00
+----------------------------------------+-----------------------------------
+                                  Total |    210,883      100.00
+r; t=0.02 10:50:19
+
+. tab                     statakt, nol
+
+  Aktueller |
+Hauptstatus |
+, generiert |
+  (ab Welle |
+         2) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+        -10 |     25,221       11.96       11.96
+         -9 |     18,954        8.99       20.95
+         -5 |      1,999        0.95       21.90
+          1 |     76,654       36.35       58.24
+          2 |     41,565       19.71       77.95
+          3 |      9,419        4.47       82.42
+          4 |     11,200        5.31       87.73
+          5 |        362        0.17       87.90
+          6 |      8,793        4.17       92.07
+          7 |      2,491        1.18       93.25
+          8 |     10,794        5.12       98.37
+          9 |      1,367        0.65       99.02
+         10 |        466        0.22       99.24
+         11 |      1,260        0.60       99.84
+         12 |        338        0.16      100.00
+------------+-----------------------------------
+      Total |    210,883      100.00
+r; t=0.03 10:50:19
+
+. recode          statakt -10=0 -9 -5=. 1 12=1 2/11=0, gen(emp)
+(134,229 differences between statakt and emp)
+r; t=0.33 10:50:19
+
+. label var       emp "employed/self-employed"
+r; t=0.00 10:50:19
+
+. tab                     emp statakt, mis 
+
+employed/s |
+elf-employ |                      Aktueller Hauptstatus, generiert (ab Welle 2)
+        ed | Item fuer  Item in W  Generieru  Erwerbsta  Arbeitslo  Schueler   Ausbildun  Wehr-/Ziv |     Total
+-----------+----------------------------------------------------------------------------------------+----------
+         0 |    25,221          0          0          0     41,565      9,419     11,200        362 |   112,938 
+         1 |         0          0          0     76,654          0          0          0          0 |    76,992 
+         . |         0     18,954      1,999          0          0          0          0          0 |    20,953 
+-----------+----------------------------------------------------------------------------------------+----------
+     Total |    25,221     18,954      1,999     76,654     41,565      9,419     11,200        362 |   210,883 
+
+
+employed/s |
+elf-employ |                Aktueller Hauptstatus, generiert (ab Welle 2)
+        ed | Hausfrau/  Muttersch  Rentner/P  Sonstiges  Arb.los,   Krank/ber  Selbst./m |     Total
+-----------+-----------------------------------------------------------------------------+----------
+         0 |     8,793      2,491     10,794      1,367        466      1,260          0 |   112,938 
+         1 |         0          0          0          0          0          0        338 |    76,992 
+         . |         0          0          0          0          0          0          0 |    20,953 
+-----------+-----------------------------------------------------------------------------+----------
+     Total |     8,793      2,491     10,794      1,367        466      1,260        338 |   210,883 
+r; t=0.06 10:50:19
+
+. 
+. collapse        (sum) emp, by(hnr welle) 
+r; t=0.24 10:50:19
+
+. gen                     emp_hh_cur=emp if welle == 7
+(134,523 missing values generated)
+r; t=0.00 10:50:19
+
+. recode          emp_hh_cur 1/99=1
+(1,132 changes made to emp_hh_cur)
+r; t=0.09 10:50:19
+
+. label var       emp_hh_cur "Employed in hh (1=yes)"
+r; t=0.00 10:50:19
+
+. tab1            emp_hh_cur
+
+-> tabulation of emp_hh_cur  
+
+Employed in |
+ hh (1=yes) |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,894       51.82       51.82
+          1 |      4,550       48.18      100.00
+------------+-----------------------------------
+      Total |      9,444      100.00
+r; t=0.01 10:50:19
+
+. 
+. ***save dataset
+. save            "$data\DM_HHgen.dta", replace
+file N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\Daten\DM_HHgen.dta saved
+r; t=0.31 10:50:20
+
+. keep            if welle==7
+(134,523 observations deleted)
+r; t=0.01 10:50:20
+
+. keep            hnr welle emp_hh_cur
+r; t=0.01 10:50:20
+
+. 
+. log close       log_HHgen
+      name:  log_HHgen
+       log:  N:\Ablagen\D01700-Projekte\4534-Stigma_Consciousness\log\07_HHgen.log
+  log type:  text
+ closed on:  22 Sep 2026, 10:50:20
+-------------------------------------------------------------------------------------------------------------------------

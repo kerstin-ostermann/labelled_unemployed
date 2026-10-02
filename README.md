@@ -146,4 +146,6 @@ The authors are happy to help with replications (kerstin.ostermann@uni-bielefeld
 
 ## 10. License
 
-CC BY 4.0. The data are subject to the access conditions of the FDZ/IAB described above.
+[![CC BY-NC 4.0](CC-BY.svg)](LICENSE)
+
+This work is licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). The data are subject to the access conditions of the FDZ/IAB described above.
